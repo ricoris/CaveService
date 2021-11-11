@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.Set;
 
 @RestController
+@RequestMapping("/v1")
 public class ExitController {
     private final ExitsRepositoryImpl exitsRepository;
 

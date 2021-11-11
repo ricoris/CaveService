@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.Objects;
 
 @RestController
+@RequestMapping("/v1")
 public class RoomController {
 
     private final RoomRepositoryImpl roomRepository;
