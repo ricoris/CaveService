@@ -1,0 +1,51 @@
+package dk.msdo.caveservice.controller;
+
+import dk.msdo.caveservice.domain.Room;
+import dk.msdo.caveservice.repositories.RoomRepositoryImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.Objects;
+
+@RestController
+public class RoomController {
+
+    @Autowired
+    private RoomRepositoryImpl roomRepository;
+
+    @GetMapping(path="/room/{position}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity getRoom(@PathVariable(value = "position") String position   )
+    {
+        Room room = roomRepository.getRoom(position);
+        if (Objects.isNull(room)) {
+            return new ResponseEntity<>( "Room not found",HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(room,HttpStatus.OK);
+    }
+
+    @PostMapping(path="/room/{position}",
+                produces = MediaType.APPLICATION_JSON_VALUE,
+                consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity updateRoom(@PathVariable String position, @RequestBody Room room) {
+        roomRepository.updateRoom(position, room);
+
+        URI location = ServletUriComponentsBuilder
+                        .fromCurrentRequest()
+                        .path("/{position}")
+                        .buildAndExpand(position)
+                        .toUri();
+
+        return ResponseEntity.created(location).body(room);
+    }
+
+
+}
