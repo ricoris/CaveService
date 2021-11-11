@@ -1,13 +1,15 @@
 package dk.msdo.caveservice.repositories;
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
 
 import dk.msdo.caveservice.common.NowStrategy;
 import dk.msdo.caveservice.common.RealNowStrategy;
 import dk.msdo.caveservice.domain.Room;
-import dk.msdo.caveservice.repositories.exceptions.InvalidCreatorException;
+import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.HashOperations;
+import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.stereotype.Repository;
 
 import java.util.Objects;
@@ -23,7 +25,7 @@ public class RoomRepositoryImpl implements RoomRepository {
     private HashOperations<String, String, Room> roomOperations;
 
     @Override
-    public Room updateRoom(String position, Room roomToUpdate) throws InvalidCreatorException {
+    public Room updateRoom(String position, Room roomToUpdate) throws RoomRepositoryException {
         //creates one record in Redis DB if record with that Id is not present
 
         // Get a room - we need to know if it is a new or existing room
@@ -53,7 +55,7 @@ public class RoomRepositoryImpl implements RoomRepository {
                 roomOperations.put(hashReference, position, existingRoom);
                 return existingRoom;
         } else
-            throw new InvalidCreatorException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position);
+            throw new RoomRepositoryException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position, 1);
     }
 
     @Override

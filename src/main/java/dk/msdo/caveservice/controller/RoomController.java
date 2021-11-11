@@ -2,7 +2,7 @@ package dk.msdo.caveservice.controller;
 
 import com.google.gson.Gson;
 import dk.msdo.caveservice.domain.Room;
-import dk.msdo.caveservice.repositories.exceptions.InvalidCreatorException;
+import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import dk.msdo.caveservice.repositories.RoomRepositoryImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,7 +44,7 @@ public class RoomController {
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
 
             return ResponseEntity.created(location).body(new Gson().toJson(room));
-        } catch (InvalidCreatorException e) {
+        } catch (RoomRepositoryException e) {
             return new ResponseEntity<>( e.toString() ,HttpStatus.UNAUTHORIZED);
         }
     }
