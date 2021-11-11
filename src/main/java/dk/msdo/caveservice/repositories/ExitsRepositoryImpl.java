@@ -1,14 +1,9 @@
 package dk.msdo.caveservice.repositories;
 
 import dk.msdo.caveservice.domain.Direction;
-import dk.msdo.caveservice.domain.Exit;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Repository;
-
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Repository
