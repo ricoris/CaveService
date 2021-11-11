@@ -1,7 +1,8 @@
 package dk.msdo.caveservice.repositories;
 import dk.msdo.caveservice.domain.Room;
+import dk.msdo.caveservice.repositories.exceptions.InvalidCreatorException;
 
 public interface RoomRepository {
-    public void updateRoom(String position, Room newRoom) ;
-    public Room getRoom(String position);
+    Room updateRoom(String position, Room newRoom) throws InvalidCreatorException;
+    Room getRoom(String position);
 }

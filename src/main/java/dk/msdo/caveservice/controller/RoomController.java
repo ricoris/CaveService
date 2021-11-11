@@ -1,14 +1,13 @@
 package dk.msdo.caveservice.controller;
 
 import dk.msdo.caveservice.domain.Room;
+import dk.msdo.caveservice.repositories.exceptions.InvalidCreatorException;
 import dk.msdo.caveservice.repositories.RoomRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -36,16 +35,18 @@ public class RoomController {
                 consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity updateRoom(@PathVariable String position, @RequestBody Room room) {
-        roomRepository.updateRoom(position, room);
 
-        URI location = ServletUriComponentsBuilder
-                        .fromCurrentRequest()
-                        .path("/{position}")
-                        .buildAndExpand(position)
-                        .toUri();
+        try {
+            roomRepository.updateRoom(position, room);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{position}")
+                    .buildAndExpand(position)
+                    .toUri();
 
-        return ResponseEntity.created(location).body(room);
+            return ResponseEntity.created(location).body(room);
+        } catch (InvalidCreatorException e) {
+            return new ResponseEntity<>( e.toString() ,HttpStatus.UNAUTHORIZED);
+        }
     }
-
-
 }
