@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.Objects;
 
 @RestController
+@RequestMapping("/v1")
 public class RoomController {
 
     private final RoomRepositoryImpl roomRepository;
@@ -21,6 +22,20 @@ public class RoomController {
     public RoomController(RoomRepositoryImpl roomRepository) {
         this.roomRepository = roomRepository;
     }
+
+
+
+    @GetMapping(path="/info", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity <String> getInfo()
+    {
+
+        return new ResponseEntity<> ("Hello from SWarm",HttpStatus.OK);
+    }
+
+
+
+
 
     @GetMapping(path="/room/{position}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
