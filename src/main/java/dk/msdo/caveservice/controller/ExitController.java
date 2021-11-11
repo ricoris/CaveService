@@ -36,8 +36,6 @@ public class ExitController {
     @ResponseBody
     public ResponseEntity <String> addExitAtPosition(@PathVariable String position, @RequestBody Exit exit) {
 
-        //Exit e = new Exit();
-        //e.setDir(direction);
         if (exitsRepository.addExitAtPosition(position, exit.getDirection())) {
 
             URI location = ServletUriComponentsBuilder
