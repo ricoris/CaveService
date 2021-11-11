@@ -55,7 +55,7 @@ public class RoomRepositoryImpl implements RoomRepository {
                 roomOperations.put(hashReference, position, existingRoom);
                 return existingRoom;
         } else
-            throw new RoomRepositoryException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position, 1);
+            throw new RoomRepositoryException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position, RoomRepositoryException.E_TEAPOT);
     }
 
     @Override
