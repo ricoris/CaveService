@@ -23,7 +23,7 @@ public class RoomRepositoryImpl implements RoomRepository {
     private HashOperations<String, String, Room> roomOperations;
 
     @Override
-    public Room updateRoom(String position, Room room) throws InvalidCreatorException {
+    public Room updateRoom(String position, Room roomToUpdate) throws InvalidCreatorException {
         //creates one record in Redis DB if record with that Id is not present
 
         // Get a room - we need to know if it is a new or existing room
@@ -41,15 +41,15 @@ public class RoomRepositoryImpl implements RoomRepository {
             newRoom.setCreationTimeISO8601(n.now().toString());
 
             // Set value
-            newRoom.setCreatorId(room.getCreatorId());
-            newRoom.setDescription(room.getDescription());
+            newRoom.setCreatorId(roomToUpdate.getCreatorId());
+            newRoom.setDescription(roomToUpdate.getDescription());
 
             // Store it in the repository
             roomOperations.put(hashReference, position, newRoom);
             return newRoom;
-        } else if (room.getCreatorId().equals(existingRoom.getCreatorId())) {
+        } else if (roomToUpdate.getCreatorId().equals(existingRoom.getCreatorId())) {
                 // Room exists - just update description.
-                existingRoom.setDescription(room.getDescription());
+                existingRoom.setDescription(roomToUpdate.getDescription());
                 roomOperations.put(hashReference, position, existingRoom);
                 return existingRoom;
         } else
