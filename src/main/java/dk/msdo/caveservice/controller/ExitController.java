@@ -1,5 +1,6 @@
 package dk.msdo.caveservice.controller;
 
+import com.google.gson.Gson;
 import dk.msdo.caveservice.domain.Direction;
 import dk.msdo.caveservice.domain.Exit;
 import dk.msdo.caveservice.repositories.ExitsRepositoryImpl;
@@ -16,11 +17,14 @@ import java.util.Set;
 
 @RestController
 public class ExitController {
-    @Autowired
-    private ExitsRepositoryImpl exitsRepository;
+    private final ExitsRepositoryImpl exitsRepository;
+
+    public ExitController(ExitsRepositoryImpl exitsRepository) {
+        this.exitsRepository = exitsRepository;
+    }
 
     @GetMapping(path="/room/{position}/exits", produces = "application/json")
-    public ResponseEntity getRoomExitsAtPosition(@PathVariable(value = "position") String position   )
+    public ResponseEntity <String> getRoomExitsAtPosition(@PathVariable(value = "position") String position   )
     {
         Set<String> e =  exitsRepository.getAllExitsAtPosition(position);
         return new ResponseEntity<>(e.toString(),HttpStatus.OK);
@@ -30,7 +34,7 @@ public class ExitController {
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity addExitAtPosition(@PathVariable String position, @RequestBody Exit exit) {
+    public ResponseEntity <String> addExitAtPosition(@PathVariable String position, @RequestBody Exit exit) {
 
         //Exit e = new Exit();
         //e.setDir(direction);
@@ -38,13 +42,15 @@ public class ExitController {
 
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
-                    .path("/{position}")
-                    .buildAndExpand(position)
+                    //.path("/{position}")
+                    //.buildAndExpand(position)
+                    .build()
                     .toUri();
 
-            return ResponseEntity.created(location).body(exit);
+            return ResponseEntity.created(location).body(new Gson().toJson(exit));
         } else {
-            return new ResponseEntity<>( "Direction not valid",HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body("Direction not valid");
+                    //new ResponseEntity<String>( "Direction not valid",HttpStatus.BAD_REQUEST);
         }
     }
 

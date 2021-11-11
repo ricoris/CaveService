@@ -4,7 +4,7 @@ plugins {
     id 'java'
 }
 
-group = 'com.example'
+group = 'dk.msdo'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -28,7 +28,10 @@ dependencies {
 
     // Redis
     implementation 'io.lettuce:lettuce-core:6.1.5.RELEASE'
-    implementation 'org.apache.commons:commons-pool2'
+    implementation 'org.apache.commons:commons-pool2:2.10.0'
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.8.9'
 
 }
 
