@@ -5,8 +5,11 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.msdo.caveservice.domain.Exit;
 import dk.msdo.caveservice.domain.Room;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -17,17 +20,11 @@ import java.text.SimpleDateFormat;
 @org.springframework.context.annotation.Configuration
 public class Configuration {
 
-    //Creating Connection to Redis DB
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
-    }
-
     //Creating RedisTemplate for Room
     @Bean
-    public RedisTemplate<String, Room> roomTemplate(){
+    public RedisTemplate<String, Room> roomTemplate(RedisConnectionFactory connectionFactory){
         RedisTemplate<String, Room> roomTemplate = new RedisTemplate<>();
-        roomTemplate.setConnectionFactory(redisConnectionFactory());
+        roomTemplate.setConnectionFactory(connectionFactory);
 
 
         //Turn on the default type
@@ -50,9 +47,9 @@ public class Configuration {
 
     //Creating RedisTemplate for Exits
     @Bean
-    public RedisTemplate<String, Exit> exitsTemplate(){
+    public RedisTemplate<String, Exit> exitsTemplate(RedisConnectionFactory connectionFactory){
         RedisTemplate<String, Exit> exitsTemplate = new RedisTemplate<>();
-        exitsTemplate.setConnectionFactory(redisConnectionFactory());
+        exitsTemplate.setConnectionFactory(connectionFactory);
 
         // Set serializer to avoid caching behaviour
         exitsTemplate.setKeySerializer(new StringRedisSerializer());
@@ -63,6 +60,4 @@ public class Configuration {
 
         return exitsTemplate;
     }
-
-
 }
