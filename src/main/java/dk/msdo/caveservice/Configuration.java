@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.msdo.caveservice.domain.Room;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -16,17 +15,11 @@ import java.text.SimpleDateFormat;
 @org.springframework.context.annotation.Configuration
 public class Configuration {
 
-    //Creating Connection to Redis DB
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
-    }
-
-    //Creating RedisTemplate for Room
-    @Bean
-    public RedisTemplate<String, Room> roomTemplate(){
+    public RedisTemplate<String, Room> roomTemplate(RedisConnectionFactory connectionFactory){
         RedisTemplate<String, Room> roomTemplate = new RedisTemplate<>();
-        roomTemplate.setConnectionFactory(redisConnectionFactory());
+        roomTemplate.setConnectionFactory(connectionFactory);
+
 
         //Turn on the default type
         ObjectMapper objectMapper = new ObjectMapper();
@@ -36,12 +29,11 @@ public class Configuration {
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Room.class);
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
-        // Set serializer to avoid caching behaviour for key, value sets
+        // Set serializer to avoid caching behaviour
         roomTemplate.setKeySerializer(new StringRedisSerializer());
-        roomTemplate.setValueSerializer(jackson2JsonRedisSerializer);
-
-        // Set serializer to avoid caching behaviour for Hash sets
         roomTemplate.setHashKeySerializer(new StringRedisSerializer());
+
+        roomTemplate.setValueSerializer(jackson2JsonRedisSerializer);
         roomTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
         return roomTemplate;
     }
