@@ -9,10 +9,13 @@ import java.io.Serializable;
 @Data
 public class Room implements Serializable {
     private static final long serialVersionUID = -1L;
-
     private @Id String id;
     private String description;
     private String creatorId;
     private String creationTimeISO8601;
 
+    public Room(String description, String creatorId) {
+        this.description = description;
+        this.creatorId = creatorId;
+    }
 }
