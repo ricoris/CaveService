@@ -15,12 +15,16 @@ import java.text.SimpleDateFormat;
 @org.springframework.context.annotation.Configuration
 public class Configuration {
 
+    /** Spring boot as default considers Redis DB as a CacheManager. This means the default is to use CacheManager
+     serialization meaning that keys in Redis DB will include class/method signatures, which we do not want. Hence
+     we must setup our own serialization.
+     */
     @Bean
     public RedisTemplate<String, Room> roomTemplate(RedisConnectionFactory connectionFactory){
         RedisTemplate<String, Room> roomTemplate = new RedisTemplate<>();
         roomTemplate.setConnectionFactory(connectionFactory);
 
-
+        // Construct the serializer
         //Turn on the default type
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
@@ -29,12 +33,14 @@ public class Configuration {
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Room.class);
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
-        // Set serializer to avoid caching behaviour
+        // Attach serializer to the template to avoid caching behaviour for key, value sets.
         roomTemplate.setKeySerializer(new StringRedisSerializer());
-        roomTemplate.setHashKeySerializer(new StringRedisSerializer());
-
         roomTemplate.setValueSerializer(jackson2JsonRedisSerializer);
+
+        // Attach serializer to the template to avoid caching behaviour for Hash sets.
+        roomTemplate.setHashKeySerializer(new StringRedisSerializer());
         roomTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
+
         return roomTemplate;
     }
 }
