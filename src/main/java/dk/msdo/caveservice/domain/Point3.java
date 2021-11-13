@@ -52,7 +52,7 @@ public class Point3 {
   
   @SneakyThrows
   public Object clone() {
-    super.clone();
+
     return new Point3(x,y,z);
   }
 
