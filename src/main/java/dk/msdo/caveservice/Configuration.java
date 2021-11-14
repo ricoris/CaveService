@@ -1,45 +1,46 @@
 package dk.msdo.caveservice;
 
-import dk.msdo.caveservice.domain.Exit;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.msdo.caveservice.domain.Room;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.text.SimpleDateFormat;
 
 @org.springframework.context.annotation.Configuration
-@PropertySource("application.properties")
 public class Configuration {
 
-    @Value("${spring.redis.host}")
-    private String redisHostName;
-
-    @Value("${spring.redis.port}")
-    private int redisPort;
-
-    //Creating Connection to Redis DB
+    /** Spring boot as default considers Redis DB as a CacheManager. This means the default is to use CacheManager
+     serialization meaning that keys in Redis DB will include class/method signatures, which we do not want. Hence
+     we must setup our own serialization.
+     */
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisHostName, redisPort));
-    }
-
-    //Creating RedisTemplate for Room
-    @Bean
-    public RedisTemplate<String, Room> roomTemplate(){
+    public RedisTemplate<String, Room> roomTemplate(RedisConnectionFactory connectionFactory){
         RedisTemplate<String, Room> roomTemplate = new RedisTemplate<>();
-        roomTemplate.setConnectionFactory(redisConnectionFactory());
-        return roomTemplate;
-    }
+        roomTemplate.setConnectionFactory(connectionFactory);
 
-    //Creating RedisTemplate for Exits
-    @Bean
-    public RedisTemplate<String, Exit> exitsTemplate(){
-        RedisTemplate<String, Exit> exitsTemplate = new RedisTemplate<>();
-        exitsTemplate.setConnectionFactory(redisConnectionFactory());
-        return exitsTemplate;
+        // Construct the serializer
+        //Turn on the default type
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        //Set date format
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Room.class);
+        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
+
+        // Attach serializer to the template to avoid caching behaviour for key, value sets.
+        roomTemplate.setKeySerializer(new StringRedisSerializer());
+        roomTemplate.setValueSerializer(jackson2JsonRedisSerializer);
+
+        // Attach serializer to the template to avoid caching behaviour for Hash sets.
+        roomTemplate.setHashKeySerializer(new StringRedisSerializer());
+        roomTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
+
+        return roomTemplate;
     }
 }
