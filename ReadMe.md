@@ -3,6 +3,7 @@
 Caveservice for MSDO
 
 * Initial Rooms is created when new storage is used.
+* We have not implemented a FakeObject for the storage as it is significantly easier to just implement the Redis Storage. Docker run commands for network and redis DB is included in the run locally section of this file.
 
 # Usage for testing with Curl
 
