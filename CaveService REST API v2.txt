@@ -55,7 +55,7 @@ Exit
 ====================================================================	
 Create/Update a room
 ====================================================================
-POST /v2/cave/room/{position} HTTP/1.1
+POST /v2/room/{position} HTTP/1.1
 Content-Type: application/json
 
 	{
@@ -66,7 +66,7 @@ Content-Type: application/json
 Response
 	
 	Status: 200 Success
-	Location: /v2/cave/room/{position}
+	Location: /v2/room/{position}
 	{
 			creatorId: 42,
 			description: "LirumLarum",
@@ -76,12 +76,12 @@ Response
 
 	
 	Example:
-	POST http://localhost/v2/cave/room/(0,0,0)
+	POST http://localhost/v2/room/(0,0,0)
 	
 ====================================================================
 Get information about the room at position
 ====================================================================
-GET /v2/cave/room/{position}
+GET /v2/room/{position}
 
 Response
 
@@ -97,13 +97,13 @@ Response
 	(none)
 
 	Example:
-	GET http://localhost/v2/cave/room/(0,0,0)
+	GET http://localhost/v2/room/(0,0,0)
 
 
 ====================================================================
 Get all possible exits from room at {position}
 ====================================================================
-GET /v2/cave/room/{position}/exits/
+GET /v2/room/{position}/exits/
 
 Response
 
@@ -118,4 +118,4 @@ Response
 	(none)
 	
 	Example:
-	GET http://localhost/v2/cave/room/(0,0,0)/exits/
+	GET http://localhost/v2/room/(0,0,0)/exits/
