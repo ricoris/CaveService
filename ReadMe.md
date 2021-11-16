@@ -4,7 +4,7 @@ Caveservice for MSDO
 
 * Initial Rooms is created when new storage is used.
 
-# Specifying storeage 
+# Specifying storage 
 open application.yml and set spring, active profiles as follows:
 
     active: fakeStorage 
