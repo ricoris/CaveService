@@ -11,9 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.HashOperations;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -87,7 +89,7 @@ public class FakeRoomRepositoryImpl implements RoomRepository {
 
         // Get a room - we need to know if it is a new or existing room
         Room existingRoom = getRoom(position);
-
+        System.out.println("roomToUpdate = " + roomToUpdate);
         if (Objects.isNull(existingRoom)){
             try {
                 if (p000.getPositionString().equals(position) || isNewPositionValid(position)) {
@@ -99,7 +101,8 @@ public class FakeRoomRepositoryImpl implements RoomRepository {
 
                     // Set creation time
                     NowStrategy n = new RealNowStrategy();
-                    newRoom.setCreationTimeISO8601(n.now().toString());
+                    newRoom.setCreationTimeISO8601(n.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+
 
                     // Set value
                     newRoom.setCreatorId(roomToUpdate.getCreatorId());
@@ -113,19 +116,20 @@ public class FakeRoomRepositoryImpl implements RoomRepository {
                 logger.error("method=updateRoom, implementationClass="
                         + this.getClass().getName()
                         + "Unable to update room at position: " + position + " " + e);
-                throw new RoomRepositoryException("Invalid room position: " + position, 1);
+                throw new RoomRepositoryException("Invalid room position: " + position, HttpStatus.NOT_FOUND);
 
             }
-        } else if (roomToUpdate.getCreatorId().equals(existingRoom.getCreatorId())) {
+        } else if (roomToUpdate.getCreatorId() != null && roomToUpdate.getCreatorId().equals(existingRoom.getCreatorId())) {
                 // Room exists - just update description.
+
                 existingRoom.setDescription(roomToUpdate.getDescription());
                 roomOperations.put(position, existingRoom);
                 return existingRoom;
         } else {
             logger.error("method=updateRoom" +
                          "implementationClass=" + this.getClass().getName() +
-                         "Unauthorized attempt to  update room: " + position + " by user " + existingRoom.getCreatorId());
-            throw new RoomRepositoryException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position, 1);
+                         " Unauthorized attempt to  update room: " + position + " by user " + existingRoom.getCreatorId());
+            throw new RoomRepositoryException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position, HttpStatus.FORBIDDEN);
         }
         return null;
     }

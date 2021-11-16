@@ -1,12 +1,14 @@
 package dk.msdo.caveservice.repositories.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 public class RoomRepositoryException extends Exception
 {
-    public Integer error;
+    public HttpStatus error;
 
     public static  Integer E_TEAPOT = 418; // i'm a teapot
 
-    public RoomRepositoryException(String str, Integer error)
+    public RoomRepositoryException(String str, HttpStatus error)
     {
         // calling the constructor of parent Exception
         super(str);

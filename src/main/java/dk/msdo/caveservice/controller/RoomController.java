@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
-import dk.msdo.caveservice.repositories.RoomRepositoryImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -75,22 +73,29 @@ private final RoomRepository roomRepository;
      *    "creatorId" : "PHG"
      * }
      *
+     * @return
      */
     @PostMapping(path="/v2/room/{position}",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity <String> postV2(@PathVariable String position, @RequestBody Room room) {
+    public ResponseEntity postV2(@PathVariable String position, @RequestBody Room room) {
 
         try {
             room = roomRepository.updateRoom(position, room);
+            System.out.println("room = " + room);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
 
             return ResponseEntity.ok()
                     .header("location", location.toString())
                     .body(new Gson().toJson(room));
+
+
         } catch (RoomRepositoryException e) {
-            return new ResponseEntity<>( e.toString() ,HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity(e.error);
+        }catch (Exception e) {
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
     }
 }

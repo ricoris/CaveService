@@ -13,10 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.HashOperations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.Array;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -91,12 +93,15 @@ public class RoomRepositoryImpl implements RoomRepository {
                     // if room does not exist - it's new
                     Room newRoom = new Room();
 
-                    // Using a UUID cause i'm lazy and it works
-                    newRoom.setId(UUID.randomUUID().toString());
+                    // Using a UUID cause i'm lazy and it works   UUID.randomUUID().toString()
+                    //RIQ change to position
+                    newRoom.setId(position);
 
                     // Set creation time
                     NowStrategy n = new RealNowStrategy();
-                    newRoom.setCreationTimeISO8601(n.now().toString());
+
+                    //   timeStamp.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                    newRoom.setCreationTimeISO8601(n.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
                     // Set value
                     newRoom.setCreatorId(roomToUpdate.getCreatorId());
@@ -110,7 +115,7 @@ public class RoomRepositoryImpl implements RoomRepository {
                 logger.error("method=updateRoom, implementationClass="
                         + this.getClass().getName()
                         + "Unable to update room at position: " + position + " " + e);
-                throw new RoomRepositoryException("Invalid room position: " + position, 1);
+                throw new RoomRepositoryException("Invalid room position: " + position, HttpStatus.NOT_ACCEPTABLE);
 
             }
         } else if (roomToUpdate.getCreatorId().equals(existingRoom.getCreatorId())) {
@@ -122,7 +127,7 @@ public class RoomRepositoryImpl implements RoomRepository {
             logger.error("method=updateRoom" +
                          "implementationClass=" + this.getClass().getName() +
                          "Unauthorized attempt to  update room: " + position + " by user " + existingRoom.getCreatorId());
-            throw new RoomRepositoryException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position, 1);
+            throw new RoomRepositoryException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position, HttpStatus.FORBIDDEN);
         }
         return null;
     }
