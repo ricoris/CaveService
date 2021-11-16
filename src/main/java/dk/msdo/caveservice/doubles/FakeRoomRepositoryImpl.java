@@ -1,39 +1,42 @@
-package dk.msdo.caveservice.repositories;
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
+package dk.msdo.caveservice.doubles;
 
 import dk.msdo.caveservice.common.NowStrategy;
 import dk.msdo.caveservice.common.RealNowStrategy;
 import dk.msdo.caveservice.domain.Direction;
 import dk.msdo.caveservice.domain.Point3;
 import dk.msdo.caveservice.domain.Room;
+import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.HashOperations;
-import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
- * Implementation for the Room Repository interface based on Redis DB
+ * Implementation for the Room Repository interface based on Redis DB.
+ *
+ * Only load the bean if fakeStorage is in active profiles.
  *
  * Author: Team Alpha
  */
 @Repository
-@Profile(value = "redisStorage")
-public class RoomRepositoryImpl implements RoomRepository {
+@Profile(value = "fakeStorage")
+public class FakeRoomRepositoryImpl implements RoomRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(RoomRepositoryImpl.class);
-    private final String hashReference = "CaveRoom";
+    private static final Logger logger = LoggerFactory.getLogger(FakeRoomRepositoryImpl.class);
 
-    @Resource(name = "roomTemplate")          // 'redisTemplate' is defined as a Bean in Configuration.java
-    private HashOperations<String, String, Room> roomOperations;
+    private HashMap <String, Room> roomOperations;
 
+    public FakeRoomRepositoryImpl() {
+        roomOperations = new HashMap<>();
+    }
     /**
      * Initialize the cave - if room position (0,0,0) does not exist, create initial rooms
      */
@@ -103,7 +106,7 @@ public class RoomRepositoryImpl implements RoomRepository {
                     newRoom.setDescription(roomToUpdate.getDescription());
 
                     // Store it in the repository
-                    roomOperations.put(hashReference, position, newRoom);
+                    roomOperations.put(position, newRoom);
                     return newRoom;
                 }
             } catch (Exception e) {
@@ -116,7 +119,7 @@ public class RoomRepositoryImpl implements RoomRepository {
         } else if (roomToUpdate.getCreatorId().equals(existingRoom.getCreatorId())) {
                 // Room exists - just update description.
                 existingRoom.setDescription(roomToUpdate.getDescription());
-                roomOperations.put(hashReference, position, existingRoom);
+                roomOperations.put(position, existingRoom);
                 return existingRoom;
         } else {
             logger.error("method=updateRoom" +
@@ -136,7 +139,7 @@ public class RoomRepositoryImpl implements RoomRepository {
     public Room getRoom(String position) {
         logger.info("method=getRoom, implementationClass=" + this.getClass().getName() + "Getting room at position: " + position );
 
-        return roomOperations.get(hashReference, position);
+        return roomOperations.get(position);
     }
 
     /**
@@ -155,7 +158,7 @@ public class RoomRepositoryImpl implements RoomRepository {
         for (Direction direction : Direction.values()) {
             Point3 tempPoint = (Point3) Point3.parseString(position).clone();
             tempPoint.translate(direction);
-            Room r = roomOperations.get(hashReference, tempPoint.getPositionString());
+            Room r = roomOperations.get(tempPoint.getPositionString());
             if (!Objects.isNull(r))
                 rcList.add(direction.toString());
         }
@@ -179,7 +182,7 @@ public class RoomRepositoryImpl implements RoomRepository {
         for (Direction direction : Direction.values()) {
             Point3 tempPoint = (Point3) Point3.parseString(position).clone();
             tempPoint.translate(direction);
-            Room r = roomOperations.get(hashReference, tempPoint.getPositionString());
+            Room r = roomOperations.get(tempPoint.getPositionString());
             if (Objects.isNull(r))
                 return true;
         }

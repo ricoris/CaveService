@@ -1,4 +1,5 @@
 package dk.msdo.caveservice.repositories;
+import dk.msdo.caveservice.domain.Point3;
 import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 
@@ -12,10 +13,21 @@ import java.util.ArrayList;
 public interface RoomRepository {
     String WILL_CROWTHER_ID = "0";
 
+    // Default values for the 5 rooms, which must be initialized by implementation classes
+     Point3 p000 = new Point3(0, 0, 0);
+     String p000_description = new String("You are standing at the end of a road before a small brick building.");
+     Point3 p010 = new Point3(0, 1, 0);
+     String p010_description = new String("You are in open forest, with a deep valley to one side.");
+     Point3 p100 = new Point3(1, 0, 0);
+     String p100_description = new String("You are inside a building, a well house for a large spring.");
+     Point3 p_100 = new Point3(-1, 0, 0);
+     String p_100_description = new String("You have walked up a hill, still in the forest.");
+     Point3 p001 = new Point3(0, 0, 1);
+     String p001_description = new String("You are in the top of a tall tree, at the end of a road.");
+
     /**
      * Initialize the cave - if room position (0,0,0) does not exist, create initial rooms
      */
-
     void initialize() ;
 
     /**
@@ -49,4 +61,10 @@ public interface RoomRepository {
      */
     ArrayList<String> getAllExitsAtPosition(String position);
 
+    /**
+     * Checks whether a new postion is valid
+     *   Input:  positionString (0,0,0)
+     *   Output: true/false
+     */
+    boolean isNewPositionValid(String position);
 }

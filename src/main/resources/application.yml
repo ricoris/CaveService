@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: redisStorage  # use redisStorage or fakeStorage to specify repository
+  redis:
+     host: localhost
+     port: 6379
+     timeout: 60000
+server:
+  error:
+    include-message: always
+debug: false
+

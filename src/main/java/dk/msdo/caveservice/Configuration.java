@@ -4,7 +4,14 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.msdo.caveservice.domain.Room;
+import dk.msdo.caveservice.doubles.FakeRoomRepositoryImpl;
+import dk.msdo.caveservice.repositories.RoomRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -15,11 +22,41 @@ import java.text.SimpleDateFormat;
 @org.springframework.context.annotation.Configuration
 public class Configuration {
 
-    /** Spring boot as default considers Redis DB as a CacheManager. This means the default is to use CacheManager
+    private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
+
+    private static String fakeStorage = "fakeStorage";
+    private static String redisStorage = "redisStorage";
+
+    private final Environment env;
+
+
+    public Configuration(Environment env) {
+        this.env = env;
+
+            logger.error("method=initialize, implementationClass="
+                + this.getClass().getName()
+                + "RoomRepository: " + env.getActiveProfiles());
+
+/*
+        if (storage.equals(fakeStorage)) {
+
+            AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+            ctx.getEnvironment().setActiveProfiles(fakeStorage);
+        } else if (storage.equals(redisStorage)) {
+            AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+            ctx.getEnvironment().setActiveProfiles(redisStorage);
+        }*/
+    }
+
+    /**
+     * Load Redis room repository if redisStorage is in active profiles
+     *
+     * Spring boot as default considers Redis DB as a CacheManager. This means the default is to use CacheManager
      serialization meaning that keys in Redis DB will include class/method signatures, which we do not want. Hence
      we must setup our own serialization.
      */
     @Bean
+    @Profile(value = "redisStorage")
     public RedisTemplate<String, Room> roomTemplate(RedisConnectionFactory connectionFactory){
         RedisTemplate<String, Room> roomTemplate = new RedisTemplate<>();
         roomTemplate.setConnectionFactory(connectionFactory);

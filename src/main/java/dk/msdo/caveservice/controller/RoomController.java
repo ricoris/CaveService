@@ -2,6 +2,7 @@ package dk.msdo.caveservice.controller;
 
 import com.google.gson.Gson;
 import dk.msdo.caveservice.domain.Room;
+import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import dk.msdo.caveservice.repositories.RoomRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,10 @@ import java.util.Objects;
 @RestController
 public class RoomController {
 
-private final RoomRepositoryImpl roomRepository;
+private final RoomRepository roomRepository;
 
-    public RoomController(RoomRepositoryImpl roomRepository) {
+
+    public RoomController(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
         this.roomRepository.initialize();
     }
