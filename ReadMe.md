@@ -37,11 +37,11 @@ Using Curl
 ## Post command
 curl -d "{\"description\":\"LirumLarum\", \"creatorID\":\"12\"}" -H "Content-Type: application/json" -X POST http://localhost:8080/v2/room/(0,0,0)
 ## Get command
-curl  -H "Content-Type: application/json" -X GET http://localhost:8080/v1/room/(0,0,0)
+curl  -H "Content-Type: application/json" -X GET http://localhost:8080/v2/room/(0,0,0)
 
 ## Get exits from Room 
 
-curl -d "{\"direction\":\"NORTH\"}" -H "Content-Type: application/json" -X POST http://localhost:8080/v1/room/(0,0,0)/exits
+curl -d "{\"direction\":\"NORTH\"}" -H "Content-Type: application/json" -X POST http://localhost:8080/v2/room/(0,0,0)/exits
 
 
 ## Running the JAR file
