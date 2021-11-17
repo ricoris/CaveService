@@ -26,12 +26,15 @@ public class CaveServiceApplication {
         ApplicationContext ctx = springApplication.run(args);
 
          /**
-         * Document loaded beans for a newbie :)
+         * Document loaded beans for a newbie :) - the list is only sent log if debug: true in application.yml
          */
-        String[] beanNames = ctx.getBeanDefinitionNames();
-        Arrays.sort(beanNames);
-        for (String beanName : beanNames) {
-            logger.info("method=main, Bean: " + beanName);
-        }
+         if (ctx.getEnvironment().getProperty("debug").equals("true")) {
+             logger.info("********************* BEAN LIST *********************");
+             String[] beanNames = ctx.getBeanDefinitionNames();
+             Arrays.sort(beanNames);
+             for (String beanName : beanNames) {
+                 logger.info("method=main, Bean: " + beanName);
+             }
+         }
     }
 }
