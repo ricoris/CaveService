@@ -36,7 +36,7 @@ Testing Docker images with network for Redis DB
 Using Curl
 
 ## Post command
-curl -d "{\"description\":\"LirumLarum\", \"creatorID\":\"12\"}" -H "Content-Type: application/json" -X POST http://localhost:8080/v2/room/(0,0,0)
+curl -i -d "{\"description\":\"LirumLarum\", \"creatorId\":\"12\"}" -H "Content-Type: application/json" -X POST http://localhost:8080/v2/room/(0,0,0)
 ## Get command
 curl  -H "Content-Type: application/json" -X GET http://localhost:8080/v2/room/(0,0,0)
 
