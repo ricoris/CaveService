@@ -45,6 +45,20 @@ public interface RoomRepository {
     Room updateRoom(String position, Room roomToUpdate) throws RoomRepositoryException;
 
     /**
+     * Update a room at position.
+     *
+     * If it is a new room it is validated if it is adjacent to
+     * an existing room before creation.
+     *
+     * If it is an existing room, it is validated that it is the creator of the room
+     * whom updates the room and if so, the description is updated.
+     *
+     * Input:  position (0,0,0) and RoomRecord from which to create or update the room
+     * Output: Updated RoomRecord
+     ***/
+    Room addRoom(String position, Room roomToAdd) throws RoomRepositoryException;
+
+    /**
      * Get room at position
      *
      * Input:  positionString (0,0,0)

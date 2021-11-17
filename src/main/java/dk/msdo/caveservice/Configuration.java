@@ -3,17 +3,12 @@ package dk.msdo.caveservice;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.msdo.caveservice.configuration.MemoryStorageCondition;
 import dk.msdo.caveservice.configuration.RedisDBStorageCondition;
-import dk.msdo.caveservice.configuration.StorageConfiguration;
 import dk.msdo.caveservice.domain.Room;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -25,12 +20,6 @@ import java.text.SimpleDateFormat;
 public class Configuration {
 
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
-
-    private final Environment env;
-
-    public Configuration(Environment env) {
-        this.env = env;
-    }
 
     /**
      * Load Redis room repository if redisStorage is in active profiles

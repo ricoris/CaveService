@@ -91,4 +91,33 @@ private final RoomRepository roomRepository;
             return new ResponseEntity<>( e.toString() ,HttpStatus.UNAUTHORIZED);
         }
     }
+    /**
+     * Put room at position
+     *
+     * EXAMPLE:
+     *
+     * PUT http://localhost:8080/v2/room/(1,0,0)
+     * Content-Type: application/json
+     * Accept: application/json
+     *
+     * {
+     *    "description" : "Yppiekieae",
+     *    "creatorId" : "PHG"
+     * }
+     *
+     */
+    @PutMapping (path="/v2/room/{position}",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity <String> putV2(@PathVariable String position, @RequestBody Room room) {
+        try {
+            room = roomRepository.addRoom(position, room);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+            return ResponseEntity.created(location).body(new Gson().toJson(room));
+        } catch (RoomRepositoryException e) {
+            return new ResponseEntity<>( e.toString() ,HttpStatus.UNAUTHORIZED);
+        }
+    }
+
 }

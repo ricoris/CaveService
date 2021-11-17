@@ -11,6 +11,7 @@ import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.time.format.DateTimeFormatter;
@@ -48,19 +49,19 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
             Room room = this.getRoom(p000.getPositionString());
             if (room == null) {
                 room = new Room(p000_description, RoomRepository.WILL_CROWTHER_ID);
-                this.updateRoom(p000.getPositionString(), room);
+                this.addRoom(p000.getPositionString(), room);
 
                 room = new Room(p010_description, RoomRepository.WILL_CROWTHER_ID);
-                this.updateRoom(p010.getPositionString(), room);
+                this.addRoom(p010.getPositionString(), room);
 
                 room = new Room(p100_description, RoomRepository.WILL_CROWTHER_ID);
-                this.updateRoom(p100.getPositionString(), room);
+                this.addRoom(p100.getPositionString(), room);
 
                 room = new Room(p_100_description, RoomRepository.WILL_CROWTHER_ID);
-                this.updateRoom(p_100.getPositionString(), room);
+                this.addRoom(p_100.getPositionString(), room);
 
                 room = new Room(p001_description, RoomRepository.WILL_CROWTHER_ID);
-                this.updateRoom(p001.getPositionString(), room);
+                this.addRoom(p001.getPositionString(), room);
             }
         } catch (RoomRepositoryException ex) {
             logger.error("method=initialize, implementationClass="
@@ -68,23 +69,12 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
                     + "Unable to initialize cave: " + ex);
         }
     }
-
-    /**
-     * Update a room at position.
-     *
-     * If it is a new room it is validated if it is adjacent to
-     * an existing room before creation.
-     *
-     * If it is an existing room, it is validated that it is the creator of the room
-     * whom updates the room and if so, the description is updated.
-     *
-     * Input:  position (0,0,0) and RoomRecord from which to create or update the room
-     * Output: Updated RoomRecord
-     ***/
     @Override
-    public Room updateRoom(String position, Room roomToUpdate) throws RoomRepositoryException {
+    public Room addRoom(String position, Room roomToUpdate) throws RoomRepositoryException {
         //creates one record in Redis DB if record with that Id is not present
-
+        if (Objects.isNull(roomToUpdate.getCreatorId())) {
+            throw new RoomRepositoryException("Creator ID missing" + position, HttpStatus.BAD_REQUEST);
+        }
         // Get a room - we need to know if it is a new or existing room
         Room existingRoom = getRoom(position);
 
@@ -110,12 +100,46 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
                     return newRoom;
                 }
             } catch (Exception e) {
-                logger.error("method=updateRoom, implementationClass="
+                logger.error("method=addRoom, implementationClass="
                         + this.getClass().getName()
-                        + "Unable to update room at position: " + position + " " + e);
-                throw new RoomRepositoryException("Invalid room position: " + position, 1);
+                        + "Unable to adde room at position: " + position + " " + e);
+                throw new RoomRepositoryException("Invalid room position: " + position, HttpStatus.FORBIDDEN);
 
             }
+        } else {
+            logger.error("method=addRoom" +
+                    "implementationClass=" + this.getClass().getName() +
+                    "Unauthorized attempt to  update room: " + position + " by user " + existingRoom.getCreatorId());
+            throw new RoomRepositoryException("Room already exists at position " + position, HttpStatus.FORBIDDEN);
+        }
+        return null;
+    }
+
+    /**
+     * Update a room at position.
+     *
+     * If it is a new room it is validated if it is adjacent to
+     * an existing room before creation.
+     *
+     * If it is an existing room, it is validated that it is the creator of the room
+     * whom updates the room and if so, the description is updated.
+     *
+     * Input:  position (0,0,0) and RoomRecord from which to create or update the room
+     * Output: Updated RoomRecord
+     ***/
+    @Override
+    public Room updateRoom(String position, Room roomToUpdate) throws RoomRepositoryException {
+        //creates one record in Redis DB if record with that Id is not present
+
+        if (Objects.isNull(roomToUpdate.getCreatorId())) {
+            throw new RoomRepositoryException("Creator ID missing" + position, HttpStatus.BAD_REQUEST);
+        }
+
+        // Get a room - we need to know if it is a new or existing room
+        Room existingRoom = getRoom(position);
+
+        if (Objects.isNull(existingRoom)){
+            throw new RoomRepositoryException("Room not found at position: " + position, HttpStatus.NOT_FOUND);
         } else if (roomToUpdate.getCreatorId().equals(existingRoom.getCreatorId())) {
                 // Room exists - just update description.
                 existingRoom.setDescription(roomToUpdate.getDescription());
@@ -125,9 +149,8 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
             logger.error("method=updateRoom" +
                          "implementationClass=" + this.getClass().getName() +
                          "Unauthorized attempt to  update room: " + position + " by user " + existingRoom.getCreatorId());
-            throw new RoomRepositoryException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position, 1);
+            throw new RoomRepositoryException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position, HttpStatus.UNAUTHORIZED);
         }
-        return null;
     }
     /**
      * Get room at position
