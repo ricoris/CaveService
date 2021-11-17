@@ -11,11 +11,11 @@ services:
     image: b33rsledge/caveservice
     container_name: "caveservice"
     environment: 
-      spring_profiles_active: redisStorage
       spring_redis_host: redisdb
       spring_redis_port: 6379
       spring_redis_timeout: 60000
       debug: 0
+      storage_room: redisStorage
     ports:
       - 8080:8080
     networks:

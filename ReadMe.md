@@ -4,12 +4,6 @@ Caveservice for MSDO
 
 * Initial Rooms is created when new storage is used.
 
-# Specifying storage 
-open application.yml and set spring, active profiles as follows:
-
-    active: fakeStorage 
-    or 
-    active: redisStorage
 # Usage for testing with Curl
 
 ## Build file
@@ -48,6 +42,12 @@ curl -d "{\"direction\":\"NORTH\"}" -H "Content-Type: application/json" -X POST 
 
 java -jar build/libs/CaveService-0.0.1-SNAPSHOT.jar --spring.redis.host=localhost --spring.redis.port=6379
 
+# Specifying storage
+open application.yml and set storage as follows:
+
+    room: memoryStorage 
+    or 
+    room: redisStorage
 
 # Team Alfa
 

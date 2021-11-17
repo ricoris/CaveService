@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
-import dk.msdo.caveservice.repositories.RoomRepositoryImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -1,22 +1,20 @@
 package dk.msdo.caveservice.repositories;
 import javax.annotation.Resource;
-import javax.servlet.ServletException;
 
 import dk.msdo.caveservice.common.NowStrategy;
 import dk.msdo.caveservice.common.RealNowStrategy;
+import dk.msdo.caveservice.configuration.RedisDBStorageCondition;
 import dk.msdo.caveservice.domain.Direction;
 import dk.msdo.caveservice.domain.Point3;
 import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.data.redis.core.HashOperations;
-import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Array;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -25,10 +23,10 @@ import java.util.*;
  * Author: Team Alpha
  */
 @Repository
-@Profile(value = "redisStorage")
-public class RoomRepositoryImpl implements RoomRepository {
+@Conditional(RedisDBStorageCondition.class)
+public class RedisDBRoomRepositoryImpl implements RoomRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(RoomRepositoryImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(RedisDBRoomRepositoryImpl.class);
     private final String hashReference = "CaveRoom";
 
     @Resource(name = "roomTemplate")          // 'redisTemplate' is defined as a Bean in Configuration.java
@@ -96,7 +94,7 @@ public class RoomRepositoryImpl implements RoomRepository {
 
                     // Set creation time
                     NowStrategy n = new RealNowStrategy();
-                    newRoom.setCreationTimeISO8601(n.now().toString());
+                    newRoom.setCreationTimeISO8601(n.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
                     // Set value
                     newRoom.setCreatorId(roomToUpdate.getCreatorId());

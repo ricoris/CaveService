@@ -3,10 +3,15 @@ package dk.msdo.caveservice;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dk.msdo.caveservice.configuration.MemoryStorageCondition;
+import dk.msdo.caveservice.configuration.RedisDBStorageCondition;
+import dk.msdo.caveservice.configuration.StorageConfiguration;
 import dk.msdo.caveservice.domain.Room;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -25,10 +30,6 @@ public class Configuration {
 
     public Configuration(Environment env) {
         this.env = env;
-
-            logger.error("method=initialize, implementationClass="
-                + this.getClass().getName()
-                + "RoomRepository: " + env.getActiveProfiles());
     }
 
     /**
@@ -39,7 +40,7 @@ public class Configuration {
      we must setup our own serialization.
      */
     @Bean
-    @Profile(value = "redisStorage")
+    @Conditional(RedisDBStorageCondition.class)
     public RedisTemplate<String, Room> roomTemplate(RedisConnectionFactory connectionFactory){
         RedisTemplate<String, Room> roomTemplate = new RedisTemplate<>();
         roomTemplate.setConnectionFactory(connectionFactory);

@@ -1,5 +1,6 @@
 package dk.msdo.caveservice;
 
+import dk.msdo.caveservice.configuration.StorageConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -17,7 +18,6 @@ public class CaveServiceApplication {
     private static final Logger logger = LoggerFactory.getLogger(CaveServiceApplication.class);
 
     public static void main(String[] args) {
-
         /**
          * Run the application
          */
