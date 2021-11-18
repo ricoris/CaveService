@@ -41,6 +41,7 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
      */
     @Override
     public void initialize()  {
+        // set up hasoperations - just simpler notation.
         roomOperations = redisTemplate.opsForHash();
 
         // If the room at entrance does not exist it is safe to assume that other initial rooms does not exist either

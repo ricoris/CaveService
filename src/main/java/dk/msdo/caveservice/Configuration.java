@@ -30,8 +30,8 @@ public class Configuration {
      we must setup our own serialization.
      */
     @Bean
-    @ConditionalOnProperty  (value="storage.room",
-                            havingValue = "redisStorage")
+    @ConditionalOnProperty ( value="storage.room",
+                             havingValue = "redisStorage")
     public RedisTemplate<String, Room> roomTemplate(RedisConnectionFactory connectionFactory){
         RedisTemplate<String, Room> roomTemplate = new RedisTemplate<>();
         roomTemplate.setConnectionFactory(connectionFactory);
