@@ -41,13 +41,13 @@ curl -d "{\"direction\":\"NORTH\"}" -H "Content-Type: application/json" -X POST 
 
 java -jar build/libs/CaveService-0.0.1-SNAPSHOT.jar --spring.redis.host=localhost --spring.redis.port=6379
 
-# Specifying storage
+## Specifying storage
 open application.yml and set storage as follows:
 
     room: memoryStorage 
     or 
     room: redisStorage
-#REST API Specification
+# REST API Specification
 This is the specification for the CaveService, which is intended to
 handle rooms and exits to those rooms. There are 4 operations in the
 CaveService as outlined below.
@@ -56,14 +56,14 @@ Versioning of the REST API is done as a part of the URI part of
 the contract as described at: https://www.baeldung.com/rest-versioning
 section 2.1
 
-#Room
+## Room
 POST	: Update a room
 
 PUT     : Create a room
 
 GET		: Get information about the room at position
 
-#Update a room
+### Update a room
 POST /v2/room/{position} HTTP/1.1
 
 Content-Type: application/json
@@ -88,7 +88,7 @@ Response
 	Example:
 	POST http://localhost/v2/room/(0,0,0)
 
-#Create a room
+### Create a room
 PUT /v2/room/{position} HTTP/1.1
 
 Content-Type: application/json
@@ -112,7 +112,7 @@ Response
 	
 	Example:
 	PUT http://localhost/v2/room/(0,0,0)
-#Get information about the room at position
+### Get information about the room at position
 GET /v2/room/{position}
 
 Response
@@ -130,10 +130,10 @@ Response
 
 	Example:
 	GET http://localhost/v2/room/(0,0,0)
-#Exit
+## Exit
 GET		: Get all possible exits from room at {position}. Exit directions are specified by NORTH, SOUTH, EAST, WEST, UP, DOWN
 
-#Get all possible exits from room at {position}
+### Get all possible exits from room at {position}
 GET /v2/room/{position}/exits/
 
 Response
