@@ -3,6 +3,14 @@ Caveservice for MSDO
 
 * Initial Rooms is created when new storage is used.
 
+## Cave Service deployment
+The cave services is available at: http://165.232.71.76:8080
+
+Examples:
+
+* GET http://165.232.71.76:8080/v2/room/(0,0,0)
+* GET http://165.232.71.76:8080/v2/room/(0,0,0)/exits
+
 # Usage for testing with Curl
 
 ## Build file
