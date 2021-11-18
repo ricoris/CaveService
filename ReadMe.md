@@ -50,8 +50,6 @@ open application.yml and set storage as follows:
 
 
 #REST API Specification
-
-
 This is the specification for the CaveService, which is intended to
 handle rooms and exits to those rooms. There are 4 operations in the
 CaveService as outlined below.
