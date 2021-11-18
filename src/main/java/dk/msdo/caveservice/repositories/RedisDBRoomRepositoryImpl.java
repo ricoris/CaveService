@@ -3,15 +3,16 @@ import javax.annotation.Resource;
 
 import dk.msdo.caveservice.common.NowStrategy;
 import dk.msdo.caveservice.common.RealNowStrategy;
-import dk.msdo.caveservice.configuration.RedisDBStorageCondition;
 import dk.msdo.caveservice.domain.Direction;
 import dk.msdo.caveservice.domain.Point3;
 import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Conditional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
@@ -24,13 +25,15 @@ import java.util.*;
  * Author: Team Alpha
  */
 @Repository
-@Conditional(RedisDBStorageCondition.class)
+@ConditionalOnProperty  (value="storage.room",
+                        havingValue = "redisStorage")
 public class RedisDBRoomRepositoryImpl implements RoomRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisDBRoomRepositoryImpl.class);
     private final String hashReference = "CaveRoom";
 
     @Resource(name = "roomTemplate")          // 'redisTemplate' is defined as a Bean in Configuration.java
+    private RedisTemplate<String, Room> redisTemplate;
     private HashOperations<String, String, Room> roomOperations;
 
     /**
@@ -38,6 +41,7 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
      */
     @Override
     public void initialize()  {
+        roomOperations = redisTemplate.opsForHash();
 
         // If the room at entrance does not exist it is safe to assume that other initial rooms does not exist either
         try {

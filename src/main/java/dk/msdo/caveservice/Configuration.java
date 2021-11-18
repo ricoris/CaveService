@@ -3,18 +3,19 @@ package dk.msdo.caveservice;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.msdo.caveservice.configuration.RedisDBStorageCondition;
 import dk.msdo.caveservice.domain.Room;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 @org.springframework.context.annotation.Configuration
 public class Configuration {
@@ -29,7 +30,8 @@ public class Configuration {
      we must setup our own serialization.
      */
     @Bean
-    @Conditional(RedisDBStorageCondition.class)
+    @ConditionalOnProperty  (value="storage.room",
+                            havingValue = "redisStorage")
     public RedisTemplate<String, Room> roomTemplate(RedisConnectionFactory connectionFactory){
         RedisTemplate<String, Room> roomTemplate = new RedisTemplate<>();
         roomTemplate.setConnectionFactory(connectionFactory);
@@ -39,6 +41,7 @@ public class Configuration {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         //Set date format
+
         objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Room.class);
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
@@ -51,6 +54,7 @@ public class Configuration {
         roomTemplate.setHashKeySerializer(new StringRedisSerializer());
         roomTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
 
+         HashOperations<String, String, Room> roomOperations;
         return roomTemplate;
     }
 }

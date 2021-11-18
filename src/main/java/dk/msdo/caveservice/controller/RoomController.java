@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,19 +23,19 @@ import java.util.Objects;
 @RestController
 public class RoomController {
 
-private final RoomRepository roomRepository;
-
+    private RoomRepository roomRepository;
 
     public RoomController(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
         this.roomRepository.initialize();
     }
+
     /**
      * Get all exits at position
      *
      * EXAMPLE:
      *
-     * GET http://localhost:8080/v2/room/{1,1,1}/Exits
+     * GET http://localhost:8080/v2/room/{1,1,1}/exits
      */
     @GetMapping(path="/v2/room/{position}/exits", produces = "application/json")
     public ResponseEntity <String> getRoomExitsAtPosition(@PathVariable(value = "position") String position   )

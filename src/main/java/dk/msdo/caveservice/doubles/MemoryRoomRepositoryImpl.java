@@ -2,7 +2,6 @@ package dk.msdo.caveservice.doubles;
 
 import dk.msdo.caveservice.common.NowStrategy;
 import dk.msdo.caveservice.common.RealNowStrategy;
-import dk.msdo.caveservice.configuration.MemoryStorageCondition;
 import dk.msdo.caveservice.domain.Direction;
 import dk.msdo.caveservice.domain.Point3;
 import dk.msdo.caveservice.domain.Room;
@@ -10,6 +9,7 @@ import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -28,7 +28,10 @@ import java.util.UUID;
  * Author: Team Alpha
  */
 @Repository
-@Conditional(MemoryStorageCondition.class)
+//@Conditional(MemoryStorageCondition.class)
+@ConditionalOnProperty  (value="storage.room",
+                        havingValue = "memoryStorage",
+                        matchIfMissing = true)
 public class MemoryRoomRepositoryImpl implements RoomRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(MemoryRoomRepositoryImpl.class);
