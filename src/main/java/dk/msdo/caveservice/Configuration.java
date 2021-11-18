@@ -15,7 +15,6 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 
 @org.springframework.context.annotation.Configuration
 public class Configuration {
@@ -43,7 +42,7 @@ public class Configuration {
         //Set date format
 
         objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Room.class);
+        Jackson2JsonRedisSerializer<? extends Room> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Room.class);
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
         // Attach serializer to the template to avoid caching behaviour for key, value sets.
