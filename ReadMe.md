@@ -6,7 +6,7 @@ Caveservice for MSDO
 ## Cave Service deployment
 The cave services is available at: http://165.232.71.76:8080
 
-Examples:
+Examples: 
 
 * GET http://165.232.71.76:8080/v2/room/(0,0,0)
 * GET http://165.232.71.76:8080/v2/room/(0,0,0)/exits
