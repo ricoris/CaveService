@@ -36,6 +36,9 @@ v2			Removed post on exit
 			rooms. There is	therefore 
 			no need for posting
 			exits.
+			
+v2			Seperate create/update 		Team Alpha		08.11.2021
+			into PUT/POST
 
 Room
 	POST	: Create/Update a room
@@ -53,7 +56,7 @@ Exit
 	
 
 ====================================================================	
-Create/Update a room
+Update a room
 ====================================================================
 POST /v2/room/{position} HTTP/1.1
 Content-Type: application/json
@@ -77,6 +80,32 @@ Response
 	
 	Example:
 	POST http://localhost/v2/room/(0,0,0)
+
+====================================================================	
+Create a room
+====================================================================
+PUT /v2/room/{position} HTTP/1.1
+Content-Type: application/json
+
+	{
+		description: "LirumLarum",
+		creatorId: 42
+	}
+
+Response
+	
+	Status: 201 Created
+	Location: /v2/room/{position}
+	{
+			creatorId: 42,
+			description: "LirumLarum",
+			creationTimeISO8601 = "2021-11-02 15:00:00.000",
+			id = 2
+	}
+
+	
+	Example:
+	PUT http://localhost/v2/room/(0,0,0)
 	
 ====================================================================
 Get information about the room at position
