@@ -1,6 +1,5 @@
 package dk.msdo.caveservice.repositories;
 import javax.annotation.Resource;
-
 import dk.msdo.caveservice.common.NowStrategy;
 import dk.msdo.caveservice.common.RealNowStrategy;
 import dk.msdo.caveservice.domain.Direction;
@@ -9,7 +8,6 @@ import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
