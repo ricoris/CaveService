@@ -1,24 +1,25 @@
 package dk.msdo.repository;
 
+import dk.msdo.caveservice.Configuration;
 import dk.msdo.caveservice.domain.Direction;
 import dk.msdo.caveservice.domain.Point3;
 import dk.msdo.caveservice.domain.Room;
-import dk.msdo.caveservice.doubles.MemoryRoomRepositoryImpl;
+import dk.msdo.caveservice.repositories.RedisDBRoomRepositoryImpl;
 import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
 import static dk.msdo.caveservice.repositories.RoomRepository.p000;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 
@@ -28,33 +29,31 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @author Team Alpha, Aarhus University.
  *
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest( classes = MemoryRoomRepositoryImpl.class,
-                 properties = "storage.room=memoryStorage")
-class MemoryRepositoryTest {
+class RepositoryJUnitTest  {
 
-  @Autowired
-  MemoryRoomRepositoryImpl storage;
+  RoomRepository storage;
 
   // Unconnected new room position
-  private final Point3 p273 = new Point3(2,7,3);
+  private final Point3 p273 = new Point3(2, 7, 3);
   private final String p273_description = "This room must never be made.";
   private final String p273_creatorId = "BlackHat";
 
   // Connected new room position
-  private final Point3 p200 = new Point3(2,0,0);
+  private final Point3 p200 = new Point3(2, 0, 0);
   private final String p200_description = "Valid new room position.";
   private final String p200_creatorId = "Højbjerg";
 
-  @BeforeEach
-  public void initialize(){
-    storage = new MemoryRoomRepositoryImpl();
-    storage.initialize();
+  RepositoryJUnitTest (RoomRepository storage) {
+    this.storage = storage;
+    this.storage.initialize();
   }
 
-  @Test
-  public void shouldReadInitialRoomsInStorage() {
-    try {
+    public void initialize(){
+      storage.initialize();
+  }
+
+
+  public void shouldReadInitialRoomsInStorage() throws RoomRepositoryException {
       Room room = this.storage.getRoom(p000.getPositionString());
       assertThat(room.getDescription(), is(RoomRepository.p000_description));
       assertThat(room.getCreatorId(), is(RoomRepository.WILL_CROWTHER_ID));
@@ -74,12 +73,8 @@ class MemoryRepositoryTest {
       room = this.storage.getRoom(RoomRepository.p010.getPositionString());
       assertThat(room.getDescription(), containsString(RoomRepository.p010_description));
       assertThat(room.getCreatorId(), is(RoomRepository.WILL_CROWTHER_ID));
-    } catch (RoomRepositoryException e) {
-      //TODO: Not necessary to assert here
-    }
   }
 
-  @Test
   public void shouldNotCreatedUnConnectedRoomPosition() throws RoomRepositoryException {
     Room room;
 
@@ -88,8 +83,7 @@ class MemoryRepositoryTest {
     assertNull(room);
   }
 
-  @Test
-  public void shouldNotCreatedOnExistingPosition() {
+    public void shouldNotCreatedOnExistingPosition() {
     Room room;
 
     //Validate that the room is not made
@@ -101,8 +95,7 @@ class MemoryRepositoryTest {
   }
 
 
-  @Test
-  public void shouldCreateAndUpdateRoom() throws RoomRepositoryException {
+    public void shouldCreateAndUpdateRoom() throws RoomRepositoryException {
     Room room;
 
     //Validate that rooms can be made
@@ -115,12 +108,11 @@ class MemoryRepositoryTest {
     assertThat(room.getDescription(), is(p200_description));
 
     //Validate that the room can be updated
-      room = storage.updateRoom(p200.getPositionString(), new Room("Another description", p200_creatorId));
-      assertThat(room.getCreatorId(), is(p200_creatorId));
-      assertThat(room.getDescription(), is("Another description"));
+    room = storage.updateRoom(p200.getPositionString(), new Room("Another description", p200_creatorId));
+    assertThat(room.getCreatorId(), is(p200_creatorId));
+    assertThat(room.getDescription(), is("Another description"));
   }
 
-  @Test
   public void shouldRejectInvalidPositionString() {
     try {
         ArrayList<String> exits = storage.getAllExitsAtPosition("KamelString");
@@ -130,7 +122,7 @@ class MemoryRepositoryTest {
   }
 
 
-  @Test
+
   public void shouldNotGetExitSet() {
     try {
       ArrayList<String> exits;
@@ -141,7 +133,6 @@ class MemoryRepositoryTest {
     }
   }
 
-  @Test
   public void shouldGetExitSet() {
     try {
       ArrayList<String> exits;
@@ -161,9 +152,7 @@ class MemoryRepositoryTest {
   }
 
 
-
-  @Test
-  public void shouldNotAllowUpdateOfNonExistingRoom() {
+public void shouldNotAllowUpdateOfNonExistingRoom() {
     // When updating room
     Room updatedRoom = new Room("A description", "hans");
     try {
@@ -174,8 +163,7 @@ class MemoryRepositoryTest {
     }
   }
 
-  @Test
-  public void shouldNotAllowNonCreatorToUpdateRoom() {
+  public void shouldNotAllowNonCreatorToUpdateRoom() throws RoomRepositoryException {
     // Given the room by Crowther at 0,0,0
 
     Room updatedRoom = new Room("A description", "BlackHat");
@@ -187,12 +175,8 @@ class MemoryRepositoryTest {
     }
     // and room is not changed
 
-    try {
       assertThat(storage.getRoom(RoomRepository.p000.getPositionString()).getDescription(),
               containsString(RoomRepository.p000_description));
-    } catch (RoomRepositoryException e) {
-      //TODO: Not necessary to assert here
-    }
   }
 
 }
