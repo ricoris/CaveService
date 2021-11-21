@@ -39,6 +39,11 @@ dependencies {
     // https://mvnrepository.com/artifact/com.konghq/unirest-java
     implementation group: 'com.konghq', name: 'unirest-java', version: '3.13.3'
 
+    testImplementation "org.testcontainers:junit-jupiter:1.16.2"
+    testImplementation('org.hamcrest:hamcrest-library:2.1')
+
+
+
 }
 
 

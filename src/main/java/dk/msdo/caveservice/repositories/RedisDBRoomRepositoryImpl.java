@@ -73,6 +73,12 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
         if (Objects.isNull(roomToUpdate.getCreatorId())) {
             throw new RoomRepositoryException("Creator ID missing" + position, HttpStatus.BAD_REQUEST);
         }
+
+        if (!Point3.isPositionStringValid(position)) {
+            logger.error("method=addRoom, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+        }
+
         // Get a room - we need to know if it is a new or existing room
         Room existingRoom = getRoom(position);
 
@@ -132,6 +138,12 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
         if (Objects.isNull(roomToUpdate.getCreatorId())) {
             throw new RoomRepositoryException("Creator ID missing" + position, HttpStatus.BAD_REQUEST);
         }
+
+        if (!Point3.isPositionStringValid(position)) {
+            logger.error("method=updateRoom, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+        }
+
         // Get a room - we need to know if it is a new or existing room
         Room existingRoom = getRoom(position);
 
@@ -159,8 +171,12 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
      * Output: requested room if it exists otherwise it returns null
      */
     @Override
-    public Room getRoom(String position) {
+    public Room getRoom(String position) throws RoomRepositoryException {
         logger.info("method=getRoom, implementationClass=" + this.getClass().getName() + "Getting room at position: " + position );
+        if (!Point3.isPositionStringValid(position)) {
+            logger.error("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+        }
 
         return roomOperations.get(hashReference, position);
     }
@@ -173,9 +189,12 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
      *           Example ["NORTH", "SOUTH", "EAST"]
      */
     @Override
-    public ArrayList<String> getAllExitsAtPosition(String position) {
+    public ArrayList<String> getAllExitsAtPosition(String position) throws RoomRepositoryException {
         logger.info("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position );
-
+        if (!Point3.isPositionStringValid(position)) {
+            logger.error("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+        }
         ArrayList<String> rcList = new ArrayList<>();
 
         for (Direction direction : Direction.values()) {
@@ -199,6 +218,15 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
      */
     @Override
     public boolean isNewPositionValid(String position) {
+
+        if (!Point3.isPositionStringValid(position)) return false;
+
+        try {
+            ArrayList<String> exitList = getAllExitsAtPosition(position);
+            if (exitList.isEmpty()) return false;
+        } catch (RoomRepositoryException e) {
+            return false;
+        }
 
         ArrayList<String> rcList = new ArrayList<>();
 

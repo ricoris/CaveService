@@ -1,0 +1,83 @@
+version: '3.3'
+# Usage for caveservice
+
+#  -- After update just run deploy again
+#   docker stack deploy --with-registry-auth -c cs-swarm.yml csstack
+
+# docker service ls
+
+services:
+  caveservice:
+    image: b33rsledge/caveservice
+    container_name: "caveservice"
+    environment: 
+      spring.redis.host: redisdb
+      spring.redis.port: 6379
+      spring.redis.timeout: 60000
+      debug: 0
+      storage.room: redisStorage
+    ports:
+      - "8080:8080"
+    networks:
+      - cs-network
+    depends_on:  #not working in swarm mode
+      - redisdb
+    command: java -jar /root/caveservice/caveservice.jar 
+  redisdb:
+    image: redis:6.2.5-alpine
+    container_name: "caveservice-redis"
+    volumes:
+      - redisservice_data:/data
+    networks:
+      - cs-network
+  messageservice:
+      image: christianmaintz/sky-cave-message-service:latest
+      environment:
+        spring.profiles.active: fake
+        spring.redis.host: redisdb
+        spring.redis.port: 6379
+        spring.redis.timeout: 60000
+        debug: 0
+      ports:
+        - "5777:5777"
+      deploy:
+        replicas: 1
+        restart_policy:
+          condition: on-failure
+        resources:
+          limits:
+            cpus: "0.5"
+            memory: 50M
+      networks:
+        - cs-network
+      command: "java -jar /root/message/sky-cave-message-service-1.0.0.jar"
+  mastercave:
+      image: b33rsledge/skycave:daemon
+      container_name: "skycave-demon"
+      ports:
+        - 7777:7777
+      deploy:
+        replicas: 1
+        restart_policy:
+          condition: on-failure
+        resources:
+          limits:
+            cpus: "0.5"
+            memory: 50M
+      networks:
+        - cs-network
+      depends_on: #not working in swarm mode
+        - redisdb
+      command: java -jar daemon.jar swarm-db.cpf    #or use ./gradle daemon -Pcpf=swarm-db.cpf
+  visualizer:
+    image: dockersamples/visualizer
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - "8081:8080"
+volumes:
+  redisservice_data:
+networks:
+  cs-network: {}
+  public:
+

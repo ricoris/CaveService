@@ -6,9 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.msdo.caveservice.domain.Room;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -20,6 +23,22 @@ import java.text.SimpleDateFormat;
 public class Configuration {
 
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
+
+    @Value("${spring.redis.host}")
+    private String host;
+
+    @Value("${spring.redis.port}")
+    private Integer port;
+
+    @Bean
+    @ConditionalOnProperty ( value="storage.room",
+            havingValue = "redisStorage")
+    public RedisConnectionFactory connectionFactory(){
+        RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
+        redisConfiguration.setHostName(host);
+        redisConfiguration.setPort(port);
+        return new LettuceConnectionFactory(redisConfiguration);
+    }
 
     /**
      * Load Redis room repository if redisStorage is in active profiles
@@ -56,4 +75,4 @@ public class Configuration {
          HashOperations<String, String, Room> roomOperations;
         return roomTemplate;
     }
-}
+ }

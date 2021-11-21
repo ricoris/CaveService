@@ -40,7 +40,12 @@ public class RoomController {
     @GetMapping(path="/v2/room/{position}/exits", produces = "application/json")
     public ResponseEntity <String> getRoomExitsAtPosition(@PathVariable(value = "position") String position   )
     {
-        ArrayList<String> exitList =  roomRepository.getAllExitsAtPosition(position);
+        ArrayList<String> exitList;
+        try {
+            exitList = roomRepository.getAllExitsAtPosition(position);
+        } catch (RoomRepositoryException e) {
+            return new ResponseEntity<>( "Bad request",e.error);
+        }
         return ResponseEntity.ok().body(exitList.toString());
     }
 
@@ -55,11 +60,15 @@ public class RoomController {
     @ResponseBody
     public ResponseEntity <String> getV2(@PathVariable(value = "position") String position   )
     {
-        Room room = roomRepository.getRoom(position);
-        if (Objects.isNull(room)) {
-            return new ResponseEntity<>( "Room not found",HttpStatus.NOT_FOUND);
+        try {
+            Room room = roomRepository.getRoom(position);
+            if (Objects.isNull(room)) {
+                return new ResponseEntity<>("Room not found", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(new Gson().toJson(room), HttpStatus.OK);
+        } catch (RoomRepositoryException e) {
+            return new ResponseEntity<>("Invalid position", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<> (new Gson().toJson(room),HttpStatus.OK);
     }
     /**
      * Post room at position

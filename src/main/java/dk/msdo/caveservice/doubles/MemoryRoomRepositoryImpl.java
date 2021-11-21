@@ -10,7 +10,6 @@ import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
@@ -78,6 +77,12 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
         if (Objects.isNull(roomToUpdate.getCreatorId())) {
             throw new RoomRepositoryException("Creator ID missing" + position, HttpStatus.BAD_REQUEST);
         }
+
+        if (!Point3.isPositionStringValid(position)) {
+            logger.error("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+        }
+
         // Get a room - we need to know if it is a new or existing room
         Room existingRoom = getRoom(position);
 
@@ -138,6 +143,12 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
             throw new RoomRepositoryException("Creator ID missing" + position, HttpStatus.BAD_REQUEST);
         }
 
+        if (!Point3.isPositionStringValid(position)) {
+            logger.error("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+        }
+
+
         // Get a room - we need to know if it is a new or existing room
         Room existingRoom = getRoom(position);
 
@@ -162,8 +173,14 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
      * Output: requested room if it exists otherwise it returns null
      */
     @Override
-    public Room getRoom(String position) {
+    public Room getRoom(String position) throws RoomRepositoryException {
         logger.info("method=getRoom, implementationClass=" + this.getClass().getName() + "Getting room at position: " + position );
+
+        if (!Point3.isPositionStringValid(position)) {
+            logger.error("method=getRoom, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+        }
+
 
         return roomOperations.get(position);
     }
@@ -176,8 +193,12 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
      *           Example ["NORTH", "SOUTH", "EAST"]
      */
     @Override
-    public ArrayList<String> getAllExitsAtPosition(String position) {
-        logger.info("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position );
+    public ArrayList<String> getAllExitsAtPosition(String position) throws RoomRepositoryException {
+
+        if (!Point3.isPositionStringValid(position)) {
+            logger.error("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+        }
 
         ArrayList<String> rcList = new ArrayList<>();
 
@@ -203,8 +224,15 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
     @Override
     public boolean isNewPositionValid(String position) {
 
-        ArrayList<String> rcList = new ArrayList<>();
+        if (!Point3.isPositionStringValid(position)) return false;
 
+        try {
+            ArrayList<String> exitList = getAllExitsAtPosition(position);
+            if (exitList.isEmpty()) return false;
+        } catch (RoomRepositoryException e) {
+            return false;
+        }
+        // Check that the new position is available
         for (Direction direction : Direction.values()) {
             Point3 tempPoint = (Point3) Point3.parseString(position).clone();
             tempPoint.translate(direction);

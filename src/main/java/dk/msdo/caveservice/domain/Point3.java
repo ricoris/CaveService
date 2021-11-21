@@ -94,4 +94,21 @@ public class Point3 {
     return new Point3(x,y,z);
   }
 
+  public static boolean isPositionStringValid(String positionString) {
+    // Yes, really inefficient, but what the heck... -HBC
+    String changed = positionString.replace("(", "").replace(")","").replace(","," ");
+    String[] tokens = changed.split("\\s");
+    if (tokens.length == 3) {
+      try {
+        int x = Integer.parseInt(tokens[0]);
+        int y = Integer.parseInt(tokens[1]);
+        int z = Integer.parseInt(tokens[2]);
+      } catch (NumberFormatException n) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
 }

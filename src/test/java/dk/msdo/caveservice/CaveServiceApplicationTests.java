@@ -27,11 +27,11 @@ class CaveServiceApplicationTests {
     public void setup()
     {
         String address = "localhost";
-        Integer port = SERVER_PORT;
-        serverRootUrl = "http://" + address + ":" + port + "";
+        //Integer port = SERVER_PORT;
+        //serverRootUrl = "http://" + address + ":" + port + "";
 
     }
-
+/*
     @Test
     public void shouldGetValidHttpResponse() throws UnirestException {
         String address = "localhost";
@@ -76,4 +76,6 @@ class CaveServiceApplicationTests {
 
 
     }
+
+ */
 }
