@@ -45,4 +45,4 @@ ENV JAVA_TOOL_OPTIONS -Dfile.encoding=UTF8
 WORKDIR /root/caveservice
 
 #default command 
-CMD ["java", "-jar",  "/root/caveservice/caveserivce.jar"]
+CMD ["java", "-jar",  "/root/caveservice/caveservice.jar"]
