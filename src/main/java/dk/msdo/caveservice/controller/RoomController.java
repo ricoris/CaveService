@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -85,11 +83,11 @@ public class RoomController {
      * }
      *
      */
-    @PostMapping(path="/v2/room/{position}",
+    @PutMapping(path="/v2/room/{position}",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity <String> postV2(@PathVariable String position, @RequestBody Room room) {
+    public ResponseEntity <String> PutV2(@PathVariable String position, @RequestBody Room room) {
 
         try {
             room = roomRepository.updateRoom(position, room);
@@ -103,7 +101,7 @@ public class RoomController {
         }
     }
     /**
-     * Put room at position
+     * Post room at position
      *
      * EXAMPLE:
      *
@@ -117,11 +115,11 @@ public class RoomController {
      * }
      *
      */
-    @PutMapping (path="/v2/room/{position}",
+    @PostMapping (path="/v2/room/{position}",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity <String> putV2(@PathVariable String position, @RequestBody Room room) {
+    public ResponseEntity <String> PostV2(@PathVariable String position, @RequestBody Room room) {
         try {
             room = roomRepository.addRoom(position, room);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
@@ -130,5 +128,4 @@ public class RoomController {
             return new ResponseEntity<>( e.toString() ,HttpStatus.UNAUTHORIZED);
         }
     }
-
 }
