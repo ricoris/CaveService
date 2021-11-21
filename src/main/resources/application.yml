@@ -8,8 +8,9 @@ spring:
 server:
   error:
     include-message: always
+  port: 8080
 debug: false
 storage:
-  #room: redisStorage
-  room: memoryStorage
+  room: redisStorage
+  #room: memoryStorage
 
