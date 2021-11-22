@@ -1,19 +1,11 @@
 package dk.msdo.repository;
 
-import dk.msdo.caveservice.Configuration;
 import dk.msdo.caveservice.domain.Direction;
 import dk.msdo.caveservice.domain.Point3;
 import dk.msdo.caveservice.domain.Room;
-import dk.msdo.caveservice.repositories.RedisDBRoomRepositoryImpl;
 import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 
@@ -29,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @author Team Alpha, Aarhus University.
  *
  */
-class RepositoryJUnitTest  {
+class RoomRepositoryOps {
 
   RoomRepository storage;
 
@@ -43,13 +35,9 @@ class RepositoryJUnitTest  {
   private final String p200_description = "Valid new room position.";
   private final String p200_creatorId = "Højbjerg";
 
-  RepositoryJUnitTest (RoomRepository storage) {
+  void setup (RoomRepository storage) {
     this.storage = storage;
     this.storage.initialize();
-  }
-
-    public void initialize(){
-      storage.initialize();
   }
 
 

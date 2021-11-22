@@ -1,31 +1,22 @@
 package dk.msdo.repository;
 
 import dk.msdo.caveservice.Configuration;
-import dk.msdo.caveservice.domain.Direction;
-import dk.msdo.caveservice.domain.Point3;
-import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.RedisDBRoomRepositoryImpl;
-import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-
-import static dk.msdo.caveservice.repositories.RoomRepository.p000;
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 /** TDD of RoomRepository interface and
- * driving the MemoryRepository implementation.
+ * driving the RedisRepository implementation.
  *
  * @author Team Alpha, Aarhus University.
  *
@@ -33,64 +24,62 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest( classes = {RedisDBRoomRepositoryImpl.class,
                             Configuration.class},
-                 properties = {"storage.room=redisStorage"})
-class RedisRepositoryJUnitTest extends RedisTestContainer {
+                         properties = {"storage.room=redisStorage"})
+@ContextConfiguration(initializers = TestContainerRedisDB.Initializer.class)
+class RoomRepositoryRedisStorageTest extends RoomRepositoryOps {
 
   @Autowired
   RedisDBRoomRepositoryImpl storage;
 
+  @BeforeEach
+  public void setup() {
+    super.setup(storage);
+  }
+
   @Test
   public void shouldReadInitialRoomsInStorage() throws RoomRepositoryException {
-    RepositoryJUnitTest junit = new RepositoryJUnitTest(storage);
-    junit.shouldReadInitialRoomsInStorage();
+    super.shouldReadInitialRoomsInStorage();
   }
 
   @Test
   public void shouldNotCreatedUnConnectedRoomPosition() throws RoomRepositoryException {
-    RepositoryJUnitTest junit = new RepositoryJUnitTest(storage);
-    junit.shouldNotCreatedUnConnectedRoomPosition();
+    super.shouldNotCreatedUnConnectedRoomPosition();
   }
 
   @Test
   public void shouldNotCreatedOnExistingPosition() {
-    RepositoryJUnitTest junit = new RepositoryJUnitTest(storage);
-    junit.shouldNotCreatedOnExistingPosition();
+    super.shouldNotCreatedOnExistingPosition();
   }
-
 
   @Test
   public void shouldCreateAndUpdateRoom() throws RoomRepositoryException {
-    RepositoryJUnitTest junit = new RepositoryJUnitTest(storage);
-    junit.shouldCreateAndUpdateRoom();
+    super.shouldCreateAndUpdateRoom();
   }
 
   @Test
   public void shouldRejectInvalidPositionString() {
-    RepositoryJUnitTest junit = new RepositoryJUnitTest(storage);
-    junit.shouldRejectInvalidPositionString();
+    super.shouldRejectInvalidPositionString();
   }
 
   @Test
   public void shouldNotGetExitSet() {
-    RepositoryJUnitTest junit = new RepositoryJUnitTest(storage);
-    junit.shouldNotGetExitSet();
+    super.shouldNotGetExitSet();
   }
 
   @Test
   public void shouldGetExitSet() {
-    RepositoryJUnitTest junit = new RepositoryJUnitTest(storage);
-    junit.shouldGetExitSet();
+    super.shouldGetExitSet();
   }
 
   @Test
   public void shouldNotAllowUpdateOfNonExistingRoom() {
-    RepositoryJUnitTest junit = new RepositoryJUnitTest(storage);
-    junit.shouldNotAllowUpdateOfNonExistingRoom();
+    super.shouldNotAllowUpdateOfNonExistingRoom();
   }
 
   @Test
   public void shouldNotAllowNonCreatorToUpdateRoom() throws RoomRepositoryException {
-    RepositoryJUnitTest junit = new RepositoryJUnitTest(storage);
-    junit.shouldNotAllowNonCreatorToUpdateRoom();
+    super.shouldNotAllowNonCreatorToUpdateRoom();
   }
+
+
 }

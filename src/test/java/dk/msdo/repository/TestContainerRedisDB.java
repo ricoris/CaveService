@@ -4,13 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 import org.testcontainers.containers.GenericContainer;
 
 @SpringBootTest
-@ContextConfiguration(initializers = RedisTestContainer.Initializer.class)
-public class RedisTestContainer {
+public class TestContainerRedisDB {
 
         private static final int REDIS_PORT = 6379;
 
