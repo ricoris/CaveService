@@ -25,8 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SpringBootTest(classes = {RedisDBRoomRepositoryImpl.class,
         Configuration.class},
         properties = {"storage.room=redisStorage"})
+// Load the RedisDB testcontainer defined in TestContainerRedisDB
 @ContextConfiguration(initializers = TestContainerRedisDB.Initializer.class)
-class RoomRepositoryRedisStorageTest extends RoomRepositoryTests {
+public class RoomRepositoryRedisStorageTest extends RoomRepositoryTests {
 
     @Autowired
     RedisDBRoomRepositoryImpl storage;

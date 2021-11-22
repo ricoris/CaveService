@@ -217,6 +217,5 @@ class RoomRepositoryTests {
         } catch (RoomRepositoryException ex) {
             assertThat(ex.error, is(HttpStatus.BAD_REQUEST));
         }
-
     }
 }

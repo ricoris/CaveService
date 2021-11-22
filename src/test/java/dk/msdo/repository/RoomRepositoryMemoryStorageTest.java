@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MemoryRoomRepositoryImpl.class,
         properties = "storage.room=memoryStorage")
-class RoomRepositoryMemoryStorageTest extends RoomRepositoryTests {
+public class RoomRepositoryMemoryStorageTest extends RoomRepositoryTests {
 
     @Autowired
     MemoryRoomRepositoryImpl storage;
