@@ -56,7 +56,7 @@ public class Point3 {
     return new Point3(x,y,z);
   }
 
-  private int[][] offset = {
+  private final int[][] offset = {
       { 0, 0, +1, -1, 0, 0 },
       { 1, -1, 0, 0, 0, 0 },
       { 0, 0, 0, 0, 1, -1 }

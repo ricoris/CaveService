@@ -31,9 +31,9 @@ public class Configuration {
     private Integer port;
 
     @Bean
-    @ConditionalOnProperty ( value="storage.room",
+    @ConditionalOnProperty(value = "storage.room",
             havingValue = "redisStorage")
-    public RedisConnectionFactory connectionFactory(){
+    public RedisConnectionFactory connectionFactory() {
         RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
         redisConfiguration.setHostName(host);
         redisConfiguration.setPort(port);
@@ -42,15 +42,15 @@ public class Configuration {
 
     /**
      * Load Redis room repository if redisStorage is in active profiles
-     *
+     * <p>
      * Spring boot as default considers Redis DB as a CacheManager. This means the default is to use CacheManager
-     serialization meaning that keys in Redis DB will include class/method signatures, which we do not want. Hence
-     we must setup our own serialization.
+     * serialization meaning that keys in Redis DB will include class/method signatures, which we do not want. Hence
+     * we must setup our own serialization.
      */
     @Bean
-    @ConditionalOnProperty ( value="storage.room",
-                             havingValue = "redisStorage")
-    public RedisTemplate<String, Room> roomTemplate(RedisConnectionFactory connectionFactory){
+    @ConditionalOnProperty(value = "storage.room",
+            havingValue = "redisStorage")
+    public RedisTemplate<String, Room> roomTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Room> roomTemplate = new RedisTemplate<>();
         roomTemplate.setConnectionFactory(connectionFactory);
 
@@ -72,7 +72,7 @@ public class Configuration {
         roomTemplate.setHashKeySerializer(new StringRedisSerializer());
         roomTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
 
-         HashOperations<String, String, Room> roomOperations;
+        HashOperations<String, String, Room> roomOperations;
         return roomTemplate;
     }
- }
+}
