@@ -51,25 +51,7 @@ services:
       networks:
         - cs-network
       command: "java -jar /root/message/sky-cave-message-service-1.0.0.jar"
-  mastercave:
-      image: b33rsledge/skycave:daemon
-      container_name: "skycave-demon"
-      ports:
-        - 7777:7777
-      deploy:
-        replicas: 1
-        restart_policy:
-          condition: on-failure
-        resources:
-          limits:
-            cpus: "0.5"
-            memory: 50M
-      networks:
-        - cs-network
-      depends_on: #not working in swarm mode
-        - redisdb
-      command: java -jar daemon.jar swarm-db.cpf    #or use ./gradle daemon -Pcpf=swarm-db.cpf
-  visualizer:
+ visualizer:
     image: dockersamples/visualizer
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"

@@ -97,7 +97,7 @@ public class RoomController {
                     .header("location", location.toString())
                     .body(new Gson().toJson(room));
         } catch (RoomRepositoryException e) {
-            return new ResponseEntity<>( e.toString() ,HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>( e.toString() , e.error);
         }
     }
     /**
