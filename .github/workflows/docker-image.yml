@@ -16,4 +16,3 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file Dockerfile.multistage --tag b33rsledge/caveservice:$(date +%s)
-      run: docker push b33rsledge/caveservice:$(date +%s)
