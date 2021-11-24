@@ -34,5 +34,5 @@ jobs:
           context: .
           push: true
           file: ./Dockerfile.multistage
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: v2
           labels: ${{ steps.meta.outputs.labels }}
