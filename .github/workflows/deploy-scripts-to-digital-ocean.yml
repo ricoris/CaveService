@@ -47,6 +47,5 @@ jobs:
           password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
           port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
           script: |
-            whoami
             ls -al
-            tar -xvfz /root/cs/deploy.tar --directory /root/cs
+            tar -xf /root/cs/deploy.tar --directory /root/cs
