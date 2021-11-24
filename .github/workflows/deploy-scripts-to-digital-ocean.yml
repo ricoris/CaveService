@@ -45,6 +45,6 @@ jobs:
           password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
           port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
           script: |
-            ls -al
             tar -xf /root/cs/scripts.tar --directory /root/cs
             rm /root/cs/scripts.tar
+            ls -al /root/cs/scripts
