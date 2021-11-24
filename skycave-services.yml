@@ -76,32 +76,32 @@ services:
       - cs-network
   # We seem to be unable to specify redishost and/or redisport without rebuilding the application. This is
   # not really ci/cd friendly as we cannot configure deployment properly.
-  playerservice:
-    image: "ligaard/player:fatjar-latest"
-    command: java -jar /root/cave/player.jar redis-compose.cpf
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-    networks:
-      - cs-network
-    ports:
-      - "7778:7778"
-    depends_on:
-      - redis
+ # playerservice:
+ #   image: "ligaard/player:fatjar-latest"
+ #   command: java -jar /root/cave/player.jar redis-compose.cpf
+ #   deploy:
+ #     replicas: 1
+ #     restart_policy:
+ #       condition: on-failure
+ #   networks:
+ #     - cs-network
+ #   ports:
+ #     - "7778:7778"
+ #   depends_on:
+ #     - redis
     # Redis needs not be accessible outside stack network, so no ports defined.
     # Redis can still be accesed via: $ docker exec -ti <containerId> redis-cli
-  redis:
-    image: "redis:6.2.6-alpine"
-    networks:
-      - cs-network
-    volumes:
-      - redisdata_pl:/data/pl
+ # redis:
+ #   image: "redis:6.2.6-alpine"
+ #   networks:
+ #     - cs-network
+ #   volumes:
+ #     - redisdata_pl:/data/pl
 volumes:
   redisdata_cs:
     external: false
-  redisdata_pl:
-    external: false
+#  redisdata_pl:
+#    external: false
   redisdata_ms:
     external: false
 networks:
