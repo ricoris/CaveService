@@ -49,5 +49,5 @@ jobs:
           script: |
             whoami
             ls -al
-            tar -xf /root/cs/deploy.tar --directory /root/cs/
+            tar -xf /root/cs/deploy.tar --directory /root/cs/.
             rm /root/cs/deploy.tar
