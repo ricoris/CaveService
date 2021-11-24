@@ -38,9 +38,3 @@ jobs:
           port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
           source: "deploy.tar"
           target: "/root/cs"
-
-      - name: Extract files
-        run: |
-          sudo tar -xf deploy.tar -C /root/cs
-          sudo rm deploy.tar
-
