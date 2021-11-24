@@ -34,8 +34,8 @@ jobs:
         with:
           host: ${{ secrets.SKYCAVEDROPLET_HOST }}
           username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
-          key: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
+          password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
           port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
           source: "deploy.tar"
           target: "/root/cs"
-          use_insecure_cipher: true
+
