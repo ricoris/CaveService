@@ -1,0 +1,19 @@
+name: deploy continuous deployment scripts
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    name: Move CD scripts
+    runs-on: ubuntu-latest
+    steps:
+      - name: SCP to Ocean
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.ocean_host }}
+          username: ${{ secrets.ocean_user }}
+          password: ${{ secrets.ocean_pass }}
+          port: ${{ secrets.ocean_port }}
+          source: "*.yml"
+          strip_components: 2
+          target: "/root/CaveService/"
