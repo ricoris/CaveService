@@ -33,7 +33,7 @@ FROM openjdk:14-jdk-alpine
 
 MAINTAINER AlfaTeam
 
-COPY --from builder /root/caveservice/build/libs/CaveService-0.0.1-SNAPSHOT.jar /root/caveservice/caveservice.jar
+COPY --from=builder /root/caveservice/build/libs/CaveService-0.0.1-SNAPSHOT.jar /root/caveservice/caveservice.jar
 
 #Expose port 8080 as default
 EXPOSE 8080
