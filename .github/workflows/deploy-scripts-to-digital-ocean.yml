@@ -27,7 +27,7 @@ jobs:
           cp -TR Dockerfile.multistage ../deploy/Dockerfile.multistage
           cp -TR skycave-services.yml ../deploy/skycave-service.yml
           cp -TR cs-swarm.yml ../deploy/cs-swarm.yml
-          tar -cvf cs.tar ../deploy/
+          tar -cvf deploy.tar ../deploy/
 
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
@@ -36,8 +36,8 @@ jobs:
           username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
           password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
           port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
-          source: "cs.tar"
-          target: "/root"
+          source: "deploy.tar"
+          target: "/root/cs"
 
       - name: multiple command
         uses: appleboy/ssh-action@master
@@ -49,5 +49,4 @@ jobs:
           script: |
             whoami
             ls -al
-            tar -xf /root/cs.tar --directory /root
-            rm /root/cs.tar
+            tar -xvfz /root/cs/deploy.tar --directory /root/cs
