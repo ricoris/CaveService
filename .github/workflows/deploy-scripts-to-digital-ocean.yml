@@ -23,7 +23,8 @@ jobs:
       - name: Run a multi-line script
         run: |
           mkdir ../deploy
-          cp -TR Dockerfile ../deploy/
+          cp -TR Dockerfile ../deploy/Dockerfile
+          cp -TR Dockerfile.multistage ../deploy/Dockerfile.multistage
           tar -cvf deploy.tar ../deploy/
 
       - name: copy file via ssh password
