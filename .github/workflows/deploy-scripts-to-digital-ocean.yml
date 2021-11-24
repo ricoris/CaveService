@@ -14,6 +14,6 @@ jobs:
           username: ${{ secrets.DO_SSH_USERNAME }}
           port: ${{ secrets.DO_SSH_PORT }}
           key: ${{ secrets.DO_SSH_KEY }}
-          source: "./dockerfile"
+          source: "dockerfile, dockerfile.multistage"
           strip_components: 2
           target: "/root/cs/"
