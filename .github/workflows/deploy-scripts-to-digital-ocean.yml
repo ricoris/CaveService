@@ -25,6 +25,8 @@ jobs:
           mkdir ../deploy
           cp -TR Dockerfile ../deploy/Dockerfile
           cp -TR Dockerfile.multistage ../deploy/Dockerfile.multistage
+          cp -TR skycave-service.yml ../deploy/skycave-service.yml
+          cp -TR cs-swarm.yml ../deploy/cs-swarm.yml
           tar -cvf deploy.tar ../deploy/
 
       - name: copy file via ssh password
@@ -33,6 +35,5 @@ jobs:
           host: ${{ secrets.DO_SSH_HOST }}
           username: ${{ secrets.DO_SSH_USERNAME }}
           key: ${{ secrets.DO_SSH_KEY }}
-          port: ${{ secrets.DO_SSH_PORT }}
           source: "deploy.tar"
-          target: "/root/csr"
+          target: "/root/cs"
