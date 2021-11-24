@@ -37,3 +37,4 @@ jobs:
           key: ${{ secrets.DO_SSH_KEY }}
           source: "deploy.tar"
           target: "/root/cs"
+          use_insecure_cipher: true
