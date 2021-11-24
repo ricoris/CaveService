@@ -22,12 +22,10 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          mkdir ../deploy
-          cp -TR Dockerfile ../deploy/Dockerfile
-          cp -TR Dockerfile.multistage ../deploy/Dockerfile.multistage
-          cp -TR skycave-services.yml ../deploy/skycave-service.yml
-          cp -TR cs-swarm.yml ../deploy/cs-swarm.yml
-          tar -cvf deploy.tar ../deploy/
+          mkdir ../scripts
+          cp -TR skycave-services.yml ../scripts/skycave-service.yml
+          cp -TR cs-swarm.yml ../scripts/cs-swarm.yml
+          tar -cvf scripts.tar ../scripts/
 
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
@@ -36,7 +34,7 @@ jobs:
           username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
           password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
           port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
-          source: "deploy.tar"
+          source: "scripts.tar"
           target: "/root/cs"
 
       - name: multiple command
@@ -48,4 +46,4 @@ jobs:
           port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
           script: |
             ls -al
-            tar -xf /root/cs/deploy.tar --directory /root/cs
+            tar -xf /root/cs/scripts.tar --directory /root/cs
