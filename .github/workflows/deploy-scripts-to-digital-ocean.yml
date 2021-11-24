@@ -47,3 +47,4 @@ jobs:
           script: |
             ls -al
             tar -xf /root/cs/scripts.tar --directory /root/cs
+            rm /root/cs/scripts.tar
