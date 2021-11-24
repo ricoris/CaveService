@@ -39,3 +39,8 @@ jobs:
           source: "deploy.tar"
           target: "/root/cs"
 
+      - name: Extract files
+        run: |
+          tar -xf deploy.tar -C /root/cs
+          rm deploy.tar
+
