@@ -25,7 +25,7 @@ jobs:
           mkdir ../deploy
           cp -TR Dockerfile ../deploy/Dockerfile
           cp -TR Dockerfile.multistage ../deploy/Dockerfile.multistage
-          cp -TR skycave-service.yml ../deploy/skycave-service.yml
+          cp -TR skycave-services.yml ../deploy/skycave-service.yml
           cp -TR cs-swarm.yml ../deploy/cs-swarm.yml
           tar -cvf deploy.tar ../deploy/
 
