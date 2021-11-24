@@ -150,7 +150,6 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
             throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST);
         }
 
-
         // Get a room - we need to know if it is a new or existing room
         Room existingRoom = getRoom(position);
 

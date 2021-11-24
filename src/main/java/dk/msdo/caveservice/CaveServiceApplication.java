@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.StandardEnvironment;
 
 import java.util.Arrays;
 
@@ -19,10 +17,8 @@ public class CaveServiceApplication {
         /*
          * Run the application
          */
-        ConfigurableEnvironment environment = new StandardEnvironment();
         SpringApplication springApplication = new SpringApplication(CaveServiceApplication.class);
         ApplicationContext ctx = springApplication.run(args);
-
          /*
          * Document loaded beans for a newbie :) - the list is only sent log if debug: true in application.yml
          */

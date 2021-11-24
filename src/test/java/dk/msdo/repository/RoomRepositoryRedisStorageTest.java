@@ -10,11 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-
 /**
  * TDD of RoomRepository interface and
  * driving the RedisRepository implementation.
@@ -25,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SpringBootTest(classes = {RedisDBRoomRepositoryImpl.class,
         Configuration.class},
         properties = {"storage.room=redisStorage"})
-// Load the RedisDB testcontainer defined in TestContainerRedisDB
+// Load the RedisDB test container defined in TestContainerRedisDB
 @ContextConfiguration(initializers = TestContainerRedisDB.Initializer.class)
 public class RoomRepositoryRedisStorageTest extends RoomRepositoryTests {
 
