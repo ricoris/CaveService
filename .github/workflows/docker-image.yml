@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: CaveService docker image
 
 on:
   push:
