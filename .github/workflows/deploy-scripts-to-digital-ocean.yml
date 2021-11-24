@@ -4,16 +4,16 @@ on:
     branches: [ master ]
 jobs:
   build:
-    name: Move CD scripts
+    name: Copy deployment scripts to digital ocean
     runs-on: ubuntu-latest
     steps:
       - name: SCP to Ocean
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.ocean_host }}
-          username: ${{ secrets.ocean_user }}
-          password: ${{ secrets.ocean_pass }}
-          port: ${{ secrets.ocean_port }}
-          source: "*.yml"
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.KEY }}
+          source: "./dockerfile"
           strip_components: 2
-          target: "/root/CaveService/"
+          target: "/root/cs/"
