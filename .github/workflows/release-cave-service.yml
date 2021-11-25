@@ -53,4 +53,4 @@ jobs:
           password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
           port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
           script: |
-            docker stack deploy --with-registry-auth -c skycave-services.yml csstack
+            docker stack deploy --with-registry-auth -c /root/cs/scripts/skycave-services.yml csstack
