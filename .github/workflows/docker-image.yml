@@ -1,4 +1,4 @@
-name: CaveService docker image
+name: Update CaveService docker image on DockerHub
 
 on:
   push:

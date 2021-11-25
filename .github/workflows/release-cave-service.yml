@@ -1,3 +1,4 @@
+name: Deploy caveservice DockerHub image to Digital Ocean and restart the stack
 on:
   release:
     types: [published]
