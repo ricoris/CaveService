@@ -22,13 +22,13 @@ gradlew bootJar
 Create Docker file with these commands
 
 ### Example of build and push
-docker build -t ricoris/caveservice .
-docker push ricoris/caveservice
+docker build -t b33rsledge/caveservice:v2 .
+docker push b33rsledge/caveservice:v2
 
 ### Running the service locally
 Testing Docker images with network for Redis DB
 1. docker network create alfa
-2. docker run --rm  --network=alfa -p 8080:8080  -ti ricoris/caveservice java -jar /caveservice.jar --spring.redis.host=alpha-redis --spring.redis.port=6379
+2. docker run --rm  --network=alfa -p 8080:8080  -ti b33rsledge/caveservice:v2 java -jar /caveservice.jar --spring.redis.host=alpha-redis --spring.redis.port=6379
 3. docker run --name alpha-redis -p 6379:6379 --hostname redisdb --network=alfa --rm -d redis redis-server
 
 # testing the service
