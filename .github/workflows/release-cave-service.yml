@@ -45,7 +45,7 @@ jobs:
           time: '30s'
 
       # Runs a set of commands using the runners shell
-      - name: Remove docker stack csstack
+      - name: Start docker stack csstack
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SKYCAVEDROPLET_HOST }}
@@ -54,3 +54,14 @@ jobs:
           port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
           script: |
             docker stack deploy --with-registry-auth -c /root/cs/scripts/skycave-services.yml csstack
+
+      # Runs a set of commands using the runners shell
+      - name: Inspect docker stack csstack after restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SKYCAVEDROPLET_HOST }}
+          username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
+          password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
+          port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
+          script: |
+            docker stack services csstack
