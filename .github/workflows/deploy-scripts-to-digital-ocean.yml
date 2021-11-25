@@ -23,7 +23,7 @@ jobs:
       - name: Run a multi-line script
         run: |
           mkdir ../scripts
-          cp -TR skycave-services.yml ../scripts/skycave-service.yml
+          cp -TR skycave-services.yml ../scripts/skycave-services.yml
           cp -TR cs-swarm.yml ../scripts/cs-swarm.yml
           tar -cvf scripts.tar ../scripts/
 

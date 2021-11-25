@@ -1,0 +1,56 @@
+on:
+  release:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so the job can access it
+      - uses: actions/checkout@v2
+
+      # Runs a set of commands using the runners shell
+      - name: Pull docker image
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SKYCAVEDROPLET_HOST }}
+          username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
+          password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
+          port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
+          script: |
+            docker pull b33rsledge/caveservice:v2
+
+      # Runs a set of commands using the runners shell
+      - name: Remove docker stack csstack
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SKYCAVEDROPLET_HOST }}
+          username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
+          password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
+          port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
+          script: |
+            docker stack rm csstack
+
+      # Wait for 30 seconds - docker swarm networks usually takes a few seconds to release
+      - name: Sleep for 30 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '30s'
+
+      # Runs a set of commands using the runners shell
+      - name: Remove docker stack csstack
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SKYCAVEDROPLET_HOST }}
+          username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
+          password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
+          port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
+          script: |
+            docker stack deploy --with-registry-auth -c skycave-services.yml csstack
