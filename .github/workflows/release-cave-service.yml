@@ -2,7 +2,7 @@ on:
   release:
     # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      types: [published]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -39,10 +39,27 @@ jobs:
             docker stack rm csstack
 
       # Wait for 30 seconds - docker swarm networks usually takes a few seconds to release
-      - name: Sleep for 30 seconds
+      - name: Sleep for 5 seconds
         uses: jakejarvis/wait-action@master
         with:
-          time: '30s'
+          time: '5s'
+
+      # Runs a set of commands using the runners shell
+      - name: Inspect docker stack csstack after remove
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SKYCAVEDROPLET_HOST }}
+          username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
+          password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
+          port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
+          script: |
+            docker stack services csstack
+
+      # Wait for 30 seconds - docker swarm networks usually takes a few seconds to release
+      - name: Sleep for 5 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '5s'
 
       # Runs a set of commands using the runners shell
       - name: Start docker stack csstack
