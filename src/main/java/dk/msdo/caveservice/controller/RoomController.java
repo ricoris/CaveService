@@ -125,7 +125,7 @@ public class RoomController {
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
             return ResponseEntity.created(location).body(new Gson().toJson(room));
         } catch (RoomRepositoryException e) {
-            return new ResponseEntity<>( e.toString() ,HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>( e.toString() , e.error);
         }
     }
 }
