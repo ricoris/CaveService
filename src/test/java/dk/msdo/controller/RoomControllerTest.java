@@ -186,5 +186,12 @@ public class RoomControllerTest {
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(),  result.getStatusCodeValue());
     }
 
+    @Test
+    public void shouldNotCreateRoomAtIllegalPosition() {
+        Room room = new Room ("","new description", "0", "");
+        ResponseEntity<String>  result = controller.PostV2("(2,7,3)", room);
+        Assertions.assertEquals(HttpStatus.FORBIDDEN.value(),  result.getStatusCodeValue());
+    }
+
 }
 

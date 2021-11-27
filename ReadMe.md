@@ -117,7 +117,12 @@ Response
 			id = 2
 	}
 
-	
+	Status: 403 Forbidden
+    (none)
+
+    Status 409 Conflict
+    (none)
+
 	Example:
 	PUT http://localhost/v2/room/(0,0,0)
 ### Get information about the room at position

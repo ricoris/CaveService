@@ -76,12 +76,12 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
     public Room addRoom(String position, Room roomToUpdate) throws RoomRepositoryException {
         //creates one record in Redis DB if record with that Id is not present
         if (Objects.isNull(roomToUpdate.getCreatorId())) {
-            logger.error("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "CreateorId missing ");
+            logger.error("method=addRoom, implementationClass=" + this.getClass().getName() + "CreateorId missing ");
             throw new RoomRepositoryException("Creator ID missing" + position, HttpStatus.BAD_REQUEST);
         }
 
         if (!Point3.isPositionStringValid(position)) {
-            logger.error("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
+            logger.error("method=addRoom, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
             throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST);
         }
 
@@ -89,40 +89,33 @@ public class MemoryRoomRepositoryImpl implements RoomRepository {
         Room existingRoom = getRoom(position);
 
         if (Objects.isNull(existingRoom)) {
-            try {
-                if (p000.getPositionString().equals(position) || isNewPositionValid(position)) {
-                    // if room does not exist - it's new
-                    Room newRoom = new Room();
+            if (p000.getPositionString().equals(position) || isNewPositionValid(position)) {
+                // if room does not exist - it's new
+                Room newRoom = new Room();
 
-                    // Using a UUID cause i'm lazy and it works
-                    newRoom.setId(UUID.randomUUID().toString());
+                // Using a UUID cause i'm lazy and it works
+                newRoom.setId(UUID.randomUUID().toString());
 
-                    // Set creation time
-                    NowStrategy n = new RealNowStrategy();
-                    newRoom.setCreationTimeISO8601(n.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                // Set creation time
+                NowStrategy n = new RealNowStrategy();
+                newRoom.setCreationTimeISO8601(n.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
-                    // Set value
-                    newRoom.setCreatorId(roomToUpdate.getCreatorId());
-                    newRoom.setDescription(roomToUpdate.getDescription());
+                // Set value
+                newRoom.setCreatorId(roomToUpdate.getCreatorId());
+                newRoom.setDescription(roomToUpdate.getDescription());
 
-                    // Store it in the repository
-                    roomOperations.put(position, newRoom);
-                    return newRoom;
-                }
-            } catch (Exception e) {
-                logger.error("method=addRoom, implementationClass="
-                        + this.getClass().getName()
-                        + "Unable to adde room at position: " + position + " " + e);
+                // Store it in the repository
+                roomOperations.put(position, newRoom);
+                return newRoom;
+            } else {
                 throw new RoomRepositoryException("Invalid room position: " + position, HttpStatus.FORBIDDEN);
-
             }
         } else {
             logger.error("method=addRoom" +
                     "implementationClass=" + this.getClass().getName() +
                     "Unauthorized attempt to  update room: " + position + " by user " + existingRoom.getCreatorId());
-            throw new RoomRepositoryException("Room already exists at position " + position, HttpStatus.FORBIDDEN);
+            throw new RoomRepositoryException("Room already exists at position " + position, HttpStatus.CONFLICT);
         }
-        return null;
     }
 
     /**
