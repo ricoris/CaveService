@@ -49,7 +49,7 @@ services:
       - cs-network
     depends_on:  #not working in swarm mode
       - redisms
-    command: "java -jar -Dspring.profiles.active=redis -Dredis.host=redis  /root/message/sky-cave-message-service-1.0.0.jar"
+    command: "java -jar  /root/message/sky-cave-message-service-1.0.0.jar"
   redisms:
     image: redis:6.2.5-alpine
     deploy:
