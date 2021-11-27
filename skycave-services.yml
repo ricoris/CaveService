@@ -52,6 +52,7 @@ services:
     command: "java -jar  /root/message/sky-cave-message-service-1.0.0.jar"
   redisms:
     image: redis:6.2.5-alpine
+    command: --port 6381
     deploy:
       replicas: 1
       restart_policy:
