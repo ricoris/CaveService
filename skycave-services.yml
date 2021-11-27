@@ -8,7 +8,7 @@ version: '3.3'
 
 services:
   caveservice:
-    image: b33rsledge/caveservice
+    image: b33rsledge/caveservice:v2
     container_name: "caveservice"
     environment: 
       spring.redis.host: rediscs
