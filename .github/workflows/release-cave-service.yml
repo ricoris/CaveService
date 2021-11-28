@@ -27,38 +27,38 @@ jobs:
             docker pull b33rsledge/caveservice:v2
 
       # Runs a set of commands using the runners shell
-      - name: Remove docker stack csstack
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SKYCAVEDROPLET_HOST }}
-          username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
-          password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
-          port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
-          script: |
-            docker stack rm csstack
+      #- name: Remove docker stack csstack
+      #  uses: appleboy/ssh-action@master
+      #  with:
+      #    host: ${{ secrets.SKYCAVEDROPLET_HOST }}
+      #    username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
+      #    password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
+      #    port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
+      #    script: |
+      #      docker stack rm csstack
 
       # Wait for 30 seconds - docker swarm networks usually takes a few seconds to release
-      - name: Sleep for 5 seconds
-        uses: jakejarvis/wait-action@master
-        with:
-          time: '5s'
+      #- name: Sleep for 5 seconds
+      #  uses: jakejarvis/wait-action@master
+      #  with:
+      #    time: '5s'
 
       # Runs a set of commands using the runners shell
-      - name: Inspect docker stack csstack after remove
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SKYCAVEDROPLET_HOST }}
-          username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
-          password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
-          port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
-          script: |
-            docker stack services csstack
+      #- name: Inspect docker stack csstack after remove
+      #  uses: appleboy/ssh-action@master
+      #  with:
+      #    host: ${{ secrets.SKYCAVEDROPLET_HOST }}
+      #    username: ${{ secrets.SKYCAVEDROPLET_USERNAME }}
+      #    password: ${{ secrets.SKYCAVEDROPLET_PASSWORD }}
+      #    port:   ${{ secrets.SKYCAVEDROPLET_PORT }}
+      #    script: |
+      #      docker stack services csstack
 
       # Wait for 30 seconds - docker swarm networks usually takes a few seconds to release
-      - name: Sleep for 5 seconds
-        uses: jakejarvis/wait-action@master
-        with:
-          time: '5s'
+      #- name: Sleep for 5 seconds
+      #  uses: jakejarvis/wait-action@master
+      #  with:
+      #    time: '5s'
 
       # Runs a set of commands using the runners shell
       - name: Start docker stack csstack
