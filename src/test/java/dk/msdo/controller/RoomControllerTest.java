@@ -8,6 +8,7 @@ import dk.msdo.caveservice.domain.Direction;
 import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.MemoryRoomRepositoryImpl;
 import dk.msdo.caveservice.repositories.RoomRepository;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
 

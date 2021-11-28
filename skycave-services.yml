@@ -30,9 +30,6 @@ services:
       placement:
         constraints:
           - node.labels.type == services
-      replicas: 1
-      restart_policy:
-        condition: on-failure
   rediscs:
     image: redis:6.2.5-alpine
     container_name: "cs-redis"

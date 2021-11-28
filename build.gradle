@@ -12,9 +12,7 @@ sourceCompatibility = '11'
 repositories {
     mavenCentral()
 }
-bootJar {
-    mainClass = 'dk.msdo.caveservice.CaveServiceApplication.Class'
-}
+
 dependencies {
     // Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.5.6'
