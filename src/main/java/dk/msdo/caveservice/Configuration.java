@@ -72,7 +72,7 @@ public class Configuration {
         roomTemplate.setHashKeySerializer(new StringRedisSerializer());
         roomTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
 
-        HashOperations<String, String, Room> roomOperations;
+//        HashOperations<String, String, Room> roomOperations;
         return roomTemplate;
     }
 }

@@ -17,7 +17,7 @@ services:
       spring.redis.host: rediscs
       spring.redis.port: 6380
       spring.redis.timeout: 60000
-      debug: 0
+      debug: "false"
       storage.room: redisStorage
     ports:
       - "8080:8080"
@@ -56,7 +56,7 @@ services:
       redis.host: redisms
       redis.port: 6381
       spring.redis.timeout: 60000
-      debug: 0
+      debug: "false"
     ports:
       - "5777:5777"
     deploy:
