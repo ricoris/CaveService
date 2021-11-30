@@ -5,6 +5,17 @@ spring:
      host: localhost
      port: 6379
      timeout: 60000
+  simulation:
+     delay: 10
+management:
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  endpoints:
+    web:
+      exposure:
+        include: 'health, info'
 server:
   error:
     include-message: always
@@ -13,4 +24,9 @@ debug: false
 storage:
   room: redisStorage
   #room: memoryStorage
+info:
+  application:
+    name: "CaveService"
+    version: "v2"
+
 
