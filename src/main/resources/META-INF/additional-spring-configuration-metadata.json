@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "spring.simulation.delay",
+      "type": "java.lang.String",
+      "description": "Description for spring.simulation.delay."
+    },
+    {
+      "name": "storage.room",
+      "type": "java.lang.String",
+      "description": "Description for storage.room."
+    }
+  ] }

@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import dk.msdo.caveservice.domain.Room;
 import dk.msdo.caveservice.repositories.RoomRepository;
 import dk.msdo.caveservice.repositories.exceptions.RoomRepositoryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +17,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Rest controller for the Room part of the CaveService
  *
@@ -20,8 +26,22 @@ import java.util.Objects;
  */
 @RestController
 public class RoomController {
+    private static final Logger logger = LoggerFactory.getLogger(RoomController.class);
+
+    @Autowired
+    Environment env;
 
     private final RoomRepository roomRepository;
+
+    private void checkDelay() {
+        try {
+            int d = Integer.parseInt(Objects.requireNonNull(env.getProperty("spring.simulation.delay")));
+            logger.info ("Delay time in seconds: " + d);
+            TimeUnit.SECONDS.sleep(d);
+        } catch (Exception e) {
+            // No action needed
+        }
+    }
 
     public RoomController(RoomRepository roomRepository) {
         this.roomRepository = roomRepository;
@@ -38,6 +58,8 @@ public class RoomController {
     @GetMapping(path="/v2/room/{position}/exits", produces = "application/json")
     public ResponseEntity <String> getRoomExitsAtPosition(@PathVariable(value = "position") String position   )
     {
+        checkDelay();
+
         ArrayList<String> exitList;
         try {
             exitList = roomRepository.getAllExitsAtPosition(position);
@@ -58,6 +80,8 @@ public class RoomController {
     @ResponseBody
     public ResponseEntity <String> getV2(@PathVariable(value = "position") String position   )
     {
+        checkDelay();
+
         try {
             Room room = roomRepository.getRoom(position);
             if (Objects.isNull(room)) {
@@ -88,6 +112,8 @@ public class RoomController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity <String> PutV2(@PathVariable String position, @RequestBody Room room) {
+
+        checkDelay();
 
         try {
             room = roomRepository.updateRoom(position, room);
@@ -120,6 +146,8 @@ public class RoomController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity <String> PostV2(@PathVariable String position, @RequestBody Room room) {
+        checkDelay();
+
         try {
             room = roomRepository.addRoom(position, room);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
