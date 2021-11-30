@@ -34,8 +34,8 @@ services:
         condition: on-failure
     healthcheck:
       test: curl --fail -s http://localhost:8080/actuator/health || exit 1
-      interval: 1m30s
-      timeout: 10s
+      interval: 10m00s
+      timeout: 15s
       retries: 3
   rediscs:
     image: redis:6.2.5-alpine

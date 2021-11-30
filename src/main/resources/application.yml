@@ -12,12 +12,10 @@ management:
     health:
       show-details: always
       show-components: always
-    shutdown:
-      enabled: true
   endpoints:
     web:
       exposure:
-        include: 'health, info, shutdown'
+        include: 'health, info'
 server:
   error:
     include-message: always
