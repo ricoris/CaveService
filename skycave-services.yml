@@ -31,7 +31,8 @@ services:
           - node.labels.type == services
       replicas: 1
       restart_policy:
-        condition: on-failure
+        delay: 5s
+        max_attempts: 5
     healthcheck:
       test: curl --fail -s http://localhost:8080/actuator/health || exit 1
       interval: 30s
