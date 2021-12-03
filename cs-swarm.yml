@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.4'
 # Usage for caveservice
 
 #  -- After update just run deploy again
@@ -6,39 +6,69 @@ version: '3.3'
 
 # docker service ls
 
+# services will be deployed on nodes with node.labels.type = services
+# databases will be deployed on nodes with node.labels.type = database
+
 services:
   caveservice:
     image: b33rsledge/caveservice:v2
-    container_name: "caveservice"
-    environment: 
-      spring.redis.host: redisdb
-      spring.redis.port: 6379
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+    environment:
+      spring.redis.host: rediscs
+      spring.redis.port: 6380
       spring.redis.timeout: 60000
-      debug: 0
+      debug: "false"
       storage.room: redisStorage
     ports:
-      - 8080:8080
+      - "8080:8080"
     networks:
       - cs-network
     depends_on:  #not working in swarm mode
-      - redisdb
-    command: java -jar /root/caveservice/caveservice.jar 
-  redisdb:
+      - rediscs
+    command: java -jar /root/caveservice/caveservice.jar
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+  rediscs:
     image: redis:6.2.5-alpine
-    container_name: "caveservice-redis"
+    command: --port 6380
     volumes:
-      - redisservice_data:/data
+      - redisdata_cs:/data/cs
     networks:
       - cs-network
-  visualizer:
-    image: dockersamples/visualizer
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    ports:
-      - "8081:8080"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 100M
+  #    healthcheck:
+  #      test: ["CMD", "redis-cli", "ping"]
+  #      interval: 60s
+  #      timeout: 3s
+  #      retries: 5
+  #visualizer:
+#    image: dockersamples/visualizer
+ #   volumes:
+#      - "/var/run/docker.sock:/var/run/docker.sock"
+#    ports:
+#      - "9000:8080"
+#    networks:
+#      - cs-network
+#    deploy:
+#      replicas: 1
+#      restart_policy:
+#        condition: on-failure
+#      placement:
+#        constraints:
+#          - node.role == manager
 volumes:
-  redisservice_data:
+  redisdata_cs:
+    external: false
 networks:
   cs-network: {}
   public:
-

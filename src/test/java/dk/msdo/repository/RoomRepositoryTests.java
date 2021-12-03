@@ -64,11 +64,14 @@ class RoomRepositoryTests {
     }
 
     public void shouldNotCreatedUnConnectedRoomPosition() throws RoomRepositoryException {
-        Room room;
 
         //Validate that the room is not made
-        room = storage.addRoom(p273.getPositionString(), new Room(p273_description, p273_creatorId));
-        assertNull(room);
+        try {
+            storage.addRoom(p273.getPositionString(), new Room(p273_description, p273_creatorId));
+        }catch (RoomRepositoryException ex) {
+            assertThat(ex.error, is(HttpStatus.FORBIDDEN));
+
+        }
     }
 
     public void shouldNotCreatedOnExistingPosition() {
@@ -78,7 +81,7 @@ class RoomRepositoryTests {
         try {
             storage.addRoom(RoomRepository.p001.getPositionString(), new Room(p200_description, p200_creatorId));
         } catch (RoomRepositoryException re) {
-            assertThat(re.error, is(HttpStatus.FORBIDDEN));
+            assertThat(re.error, is(HttpStatus.CONFLICT));
         }
     }
 

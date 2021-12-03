@@ -92,6 +92,14 @@ Response
 			id = 2
 	}
 
+	Status: 400 BAD REQUEST
+    (none)
+
+	Status: 401 UNAUTHORIZED
+    (none)
+
+	Status: 404 NOT-FOUND
+    (none)
 	
 	Example:
 	POST http://localhost/v2/room/(0,0,0)
@@ -117,7 +125,15 @@ Response
 			id = 2
 	}
 
-	
+	Status: 400 BAD REQUEST
+    (none)
+
+	Status: 403 FORBIDDEN
+    (none)
+
+    Status 409 CONFLICT
+    (none)
+
 	Example:
 	PUT http://localhost/v2/room/(0,0,0)
 ### Get information about the room at position
@@ -132,6 +148,9 @@ Response
 		creationTimeISO8601 = "2021-11-02 15:00:00.000",
 		id = 2
 	}
+
+	Status: 400 BAD REQUEST
+    (none)
 	
 	Status: 404 Not Found
 	(none)
@@ -152,7 +171,11 @@ Response
 		EAST,
 		WEST,
 		UP
-	]	 
+	]
+
+	Status: 400 BAD REQUEST
+    (none)
+
 	Status: 404 Not Found
 	(none)
 	

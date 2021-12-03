@@ -6,15 +6,17 @@ version: '3.3'
 
 # docker service ls
 
+# services will be deployed on nodes with node.labels.type = services
+# databases will be deployed on nodes with node.labels.type = database
+
 services:
   caveservice:
-    image: b33rsledge/caveservice
-    container_name: "caveservice"
-    environment: 
+    image: b33rsledge/caveservice:v2
+    environment:
       spring.redis.host: rediscs
       spring.redis.port: 6380
       spring.redis.timeout: 60000
-      debug: 0
+      debug: "false"
       storage.room: redisStorage
     ports:
       - "8080:8080"
@@ -22,36 +24,27 @@ services:
       - cs-network
     depends_on:  #not working in swarm mode
       - rediscs
-    command: java -jar /root/caveservice/caveservice.jar 
+    command: java -jar /root/caveservice/caveservice.jar
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == services
+      replicas: 1
+      restart_policy:
+        delay: 5s
+        max_attempts: 5
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health || exit 1
+      interval: 30s
+      timeout: 15s
+      retries: 3
   rediscs:
     image: redis:6.2.5-alpine
-    container_name: "cs-redis"
     command: --port 6380
     volumes:
       - redisdata_cs:/data/cs
     networks:
       - cs-network
-  messageservice:
-    image: christianmaintz/sky-cave-message-service:latest
-    environment:
-      spring.profiles.active: redis
-      redis.host: redisms
-      redis.port: 6381
-      spring.redis.timeout: 60000
-      debug: 0
-    ports:
-      - "5777:5777"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-    networks:
-      - cs-network
-    depends_on:  #not working in swarm mode
-      - redisms
-    command: "java -jar -Dspring.profiles.active=redis -Dredis.host=redis  /root/message/sky-cave-message-service-1.0.0.jar"
-  redisms:
-    image: redis:6.2.5-alpine
     deploy:
       replicas: 1
       restart_policy:
@@ -60,6 +53,50 @@ services:
         limits:
           cpus: "0.1"
           memory: 100M
+      placement:
+        constraints:
+          - node.labels.type == database
+#    healthcheck:
+#      test: ["CMD", "redis-cli", "ping"]
+#      interval: 60s
+#     timeout: 3s
+#      retries: 5
+  messageservice:
+    image: christianmaintz/sky-cave-message-service:latest
+    environment:
+      spring.profiles.active: redis
+      redis.host: redisms
+      redis.port: 6381
+      spring.redis.timeout: 60000
+      debug: "false"
+    ports:
+      - "5777:5777"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.type == services
+    networks:
+      - cs-network
+    depends_on:  #not working in swarm mode
+      - redisms
+    command: "java -jar  /root/message/sky-cave-message-service-1.1.0.jar"
+  redisms:
+    image: redis:6.2.5-alpine
+    command: --port 6381
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 100M
+      placement:
+        constraints:
+          - node.labels.type == database
     ports:
       - "6381"
     volumes:
@@ -74,34 +111,16 @@ services:
       - "9000:8080"
     networks:
       - cs-network
-  # We seem to be unable to specify redishost and/or redisport without rebuilding the application. This is
-  # not really ci/cd friendly as we cannot configure deployment properly.
- # playerservice:
- #   image: "ligaard/player:fatjar-latest"
- #   command: java -jar /root/cave/player.jar redis-compose.cpf
- #   deploy:
- #     replicas: 1
- #     restart_policy:
- #       condition: on-failure
- #   networks:
- #     - cs-network
- #   ports:
- #     - "7778:7778"
- #   depends_on:
- #     - redis
-    # Redis needs not be accessible outside stack network, so no ports defined.
-    # Redis can still be accesed via: $ docker exec -ti <containerId> redis-cli
- # redis:
- #   image: "redis:6.2.6-alpine"
- #   networks:
- #     - cs-network
- #   volumes:
- #     - redisdata_pl:/data/pl
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager
 volumes:
   redisdata_cs:
     external: false
-#  redisdata_pl:
-#    external: false
   redisdata_ms:
     external: false
 networks:

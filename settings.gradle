@@ -1,1 +1,3 @@
 rootProject.name = 'CaveService'
+include 'integration'
+

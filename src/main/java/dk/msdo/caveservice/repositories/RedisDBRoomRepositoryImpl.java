@@ -1,5 +1,7 @@
 package dk.msdo.caveservice.repositories;
+
 import javax.annotation.Resource;
+
 import dk.msdo.caveservice.common.NowStrategy;
 import dk.msdo.caveservice.common.RealNowStrategy;
 import dk.msdo.caveservice.domain.Direction;
@@ -19,12 +21,12 @@ import java.util.*;
 
 /**
  * Implementation for the Room Repository interface based on Redis DB
- *
+ * <p>
  * Author: Team Alpha
  */
 @Repository
-@ConditionalOnProperty  (value="storage.room",
-                        havingValue = "redisStorage")
+@ConditionalOnProperty(value = "storage.room",
+        havingValue = "redisStorage")
 public class RedisDBRoomRepositoryImpl implements RoomRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisDBRoomRepositoryImpl.class);
@@ -38,7 +40,7 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
      * Initialize the cave - if room position (0,0,0) does not exist, create initial rooms
      */
     @Override
-    public void initialize()  {
+    public void initialize() {
         // set up hasoperations - just simpler notation.
         roomOperations = redisTemplate.opsForHash();
 
@@ -67,6 +69,7 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
                     + "Unable to initialize cave: " + ex);
         }
     }
+
     @Override
     public Room addRoom(String position, Room roomToUpdate) throws RoomRepositoryException {
         //creates one record in Redis DB if record with that Id is not present
@@ -76,58 +79,52 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
 
         if (!Point3.isPositionStringValid(position)) {
             logger.error("method=addRoom, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
-            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST);
         }
 
         // Get a room - we need to know if it is a new or existing room
         Room existingRoom = getRoom(position);
 
-        if (Objects.isNull(existingRoom)){
-            try {
-                if (p000.getPositionString().equals(position) || isNewPositionValid(position)) {
-                    // if room does not exist - it's new
-                    Room newRoom = new Room();
+        if (Objects.isNull(existingRoom)) {
 
-                    // Using a UUID cause i'm lazy and it works
-                    newRoom.setId(UUID.randomUUID().toString());
+            if (p000.getPositionString().equals(position) || isNewPositionValid(position)) {
+                // if room does not exist - it's new
+                Room newRoom = new Room();
 
-                    // Set creation time
-                    NowStrategy n = new RealNowStrategy();
-                    newRoom.setCreationTimeISO8601(n.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                // Using a UUID cause i'm lazy and it works
+                newRoom.setId(UUID.randomUUID().toString());
 
-                    // Set value
-                    newRoom.setCreatorId(roomToUpdate.getCreatorId());
-                    newRoom.setDescription(roomToUpdate.getDescription());
+                // Set creation time
+                NowStrategy n = new RealNowStrategy();
+                newRoom.setCreationTimeISO8601(n.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 
-                    // Store it in the repository
-                    roomOperations.put(hashReference, position, newRoom);
-                    return newRoom;
-                }
-            } catch (Exception e) {
-                logger.error("method=addRoom, implementationClass="
-                        + this.getClass().getName()
-                        + "Unable to add room at position: " + position + " " + e);
+                // Set value
+                newRoom.setCreatorId(roomToUpdate.getCreatorId());
+                newRoom.setDescription(roomToUpdate.getDescription());
+
+                // Store it in the repository
+                roomOperations.put(hashReference, position, newRoom);
+                return newRoom;
+            } else {
                 throw new RoomRepositoryException("Invalid room position: " + position, HttpStatus.FORBIDDEN);
-
             }
         } else {
             logger.error("method=addRoom" +
                     "implementationClass=" + this.getClass().getName() +
                     "Unauthorized attempt to  update room: " + position + " by user " + existingRoom.getCreatorId());
-            throw new RoomRepositoryException("Not allowed to create room at position: " + position, HttpStatus.FORBIDDEN);
+            throw new RoomRepositoryException("Not allowed to create room at position: " + position, HttpStatus.CONFLICT);
         }
-        return null;
     }
 
     /**
      * Update a room at position.
-     *
+     * <p>
      * If it is a new room it is validated if it is adjacent to
      * an existing room before creation.
-     *
+     * <p>
      * If it is an existing room, it is validated that it is the creator of the room
      * whom updates the room and if so, the description is updated.
-     *
+     * <p>
      * Input:  position (0,0,0) and RoomRecord from which to create or update the room
      * Output: Updated RoomRecord
      ***/
@@ -141,41 +138,42 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
 
         if (!Point3.isPositionStringValid(position)) {
             logger.error("method=updateRoom, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
-            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST);
         }
 
         // Get a room - we need to know if it is a new or existing room
         Room existingRoom = getRoom(position);
 
-        if (Objects.isNull(existingRoom)){
-                logger.error("method=updateRoom, implementationClass="
-                        + this.getClass().getName()
-                        + "Unable to update room at position: " + position + " ");
-                throw new RoomRepositoryException("Invalid room position: " + position, HttpStatus.NOT_FOUND);
+        if (Objects.isNull(existingRoom)) {
+            logger.error("method=updateRoom, implementationClass="
+                    + this.getClass().getName()
+                    + "Unable to update room at position: " + position + " ");
+            throw new RoomRepositoryException("Invalid room position: " + position, HttpStatus.NOT_FOUND);
         } else if (roomToUpdate.getCreatorId().equals(existingRoom.getCreatorId())) {
-                // Room exists - just update description.
-                existingRoom.setDescription(roomToUpdate.getDescription());
-                roomOperations.put(hashReference, position, existingRoom);
-                return existingRoom;
+            // Room exists - just update description.
+            existingRoom.setDescription(roomToUpdate.getDescription());
+            roomOperations.put(hashReference, position, existingRoom);
+            return existingRoom;
         } else {
             logger.error("method=updateRoom" +
-                         "implementationClass=" + this.getClass().getName() +
-                         "Unauthorized attempt to  update room: " + position + " by user " + existingRoom.getCreatorId());
+                    "implementationClass=" + this.getClass().getName() +
+                    "Unauthorized attempt to  update room: " + position + " by user " + existingRoom.getCreatorId());
             throw new RoomRepositoryException("Creator ID " + existingRoom.getCreatorId() + "does not match that of the existing room at position " + position, HttpStatus.UNAUTHORIZED);
         }
     }
+
     /**
      * Get room at position
-     *
+     * <p>
      * Input:  positionString (0,0,0)
      * Output: requested room if it exists otherwise it returns null
      */
     @Override
     public Room getRoom(String position) throws RoomRepositoryException {
-        logger.info("method=getRoom, implementationClass=" + this.getClass().getName() + "Getting room at position: " + position );
+        logger.info("method=getRoom, implementationClass=" + this.getClass().getName() + "Getting room at position: " + position);
         if (!Point3.isPositionStringValid(position)) {
             logger.error("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
-            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST);
         }
 
         return roomOperations.get(hashReference, position);
@@ -183,17 +181,17 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
 
     /**
      * Returns all exits at position
-     *   Input:  positionString (0,0,0)
-     *   Output: Exits at postion in the format of ArrayList<String>
-     *
-     *           Example ["NORTH", "SOUTH", "EAST"]
+     * Input:  positionString (0,0,0)
+     * Output: Exits at postion in the format of ArrayList<String>
+     * <p>
+     * Example ["NORTH", "SOUTH", "EAST"]
      */
     @Override
     public ArrayList<String> getAllExitsAtPosition(String position) throws RoomRepositoryException {
-        logger.info("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position );
+        logger.info("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
         if (!Point3.isPositionStringValid(position)) {
             logger.error("method=getAllExitsAtPosition, implementationClass=" + this.getClass().getName() + "Getting exits for room at position: " + position);
-            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST );
+            throw new RoomRepositoryException("invalid position string", HttpStatus.BAD_REQUEST);
         }
         ArrayList<String> rcList = new ArrayList<>();
 
@@ -211,10 +209,10 @@ public class RedisDBRoomRepositoryImpl implements RoomRepository {
      * Validates whether a given postion is an appropriate location for
      * the creation of a new room. Meaning it must be adjacent to an existing
      * room
-     *
+     * <p>
      * Input:  positionString (0,0,0)
      * Output: True if it is an appropriate location
-     *         False if it is not
+     * False if it is not
      */
     @Override
     public boolean isNewPositionValid(String position) {

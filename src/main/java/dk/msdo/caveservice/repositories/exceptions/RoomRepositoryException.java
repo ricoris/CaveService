@@ -2,6 +2,8 @@ package dk.msdo.caveservice.repositories.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import javax.servlet.http.HttpServletResponse;
+
 public class RoomRepositoryException extends Exception
 {
     public HttpStatus error;
