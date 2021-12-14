@@ -11,7 +11,7 @@ version: '3.3'
 
 services:
   caveservice:
-    image: b33rsledge/caveservice:v3
+    image: b33rsledge/caveservice:v2
     environment:
       spring.redis.host: rediscs
       spring.redis.port: 6380
