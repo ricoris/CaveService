@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.5.6'
+    id 'org.springframework.boot' version '2.6.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
@@ -7,7 +7,6 @@ plugins {
 
 group = 'dk.msdo'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
@@ -15,12 +14,12 @@ repositories {
 
 dependencies {
     // Spring Boot
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.5.6'
-    implementation 'org.springframework.boot:spring-boot-starter-hateoas:2.5.6'
-    implementation 'org.springframework.boot:spring-boot-starter-web-services:2.5.6'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.5.6'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.6.1'
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas:2.6.1'
+    implementation 'org.springframework.boot:spring-boot-starter-web-services:2.6.1'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.6.1'
     implementation 'junit:junit:4.13.2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.6'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.1'
 
     annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
     // ...
@@ -33,7 +32,7 @@ dependencies {
 
     // Redis
     implementation 'io.lettuce:lettuce-core:6.1.5.RELEASE'
-    implementation 'org.apache.commons:commons-pool2:2.10.0'
+    implementation 'org.apache.commons:commons-pool2:2.11.1'
 
     // Gson
     implementation 'com.google.code.gson:gson:2.8.9'

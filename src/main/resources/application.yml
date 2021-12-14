@@ -11,7 +11,7 @@ management:
   endpoint:
     health:
       show-details: always
-      show-components: always
+      show-components: never
     shutdown:
       enabled: false
   endpoints:
@@ -22,6 +22,7 @@ server:
   error:
     include-message: always
   port: 8080
+  shutdown: graceful
 debug: false
 storage:
   room: redisStorage
@@ -29,6 +30,6 @@ storage:
 info:
   application:
     name: "CaveService"
-    version: "v2"
+    version: "v3"
 
 
