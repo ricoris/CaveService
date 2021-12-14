@@ -27,7 +27,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: b33rsledge/caveservice
-          tags: type=raw,value=v2
+          tags: type=raw,value=v3
 
 
       - name: Build and push
