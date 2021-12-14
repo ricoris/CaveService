@@ -24,7 +24,7 @@ services:
       - cs-network
     depends_on:  #not working in swarm mode
       - rediscs
-    command: java -jar /root/caveservice/caveservice.jar
+    command: java -jar /usr/caveservice/caveservice.jar
     deploy:
       placement:
         constraints:
