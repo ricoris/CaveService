@@ -6,7 +6,7 @@ spring:
      port: 6379
      timeout: 60000
   simulation:
-     delay: 0
+     delay: 25 #For grace fully stop
 management:
   endpoint:
     health:
@@ -22,6 +22,7 @@ server:
   error:
     include-message: always
   port: 8080
+  shutdown: graceful
 debug: false
 storage:
   room: redisStorage
